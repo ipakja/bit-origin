@@ -3,7 +3,7 @@ services:
   zammad:
     image: zammad/zammad:6
     container_name: zammad
-    restart: always
+    restart: unless-stopped
     ports:
       - "8080:8080"
     environment:
@@ -13,6 +13,11 @@ services:
       - ZAMMAD_RAILS4=true
     volumes:
       - zammad-data:/opt/zammad
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8080 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 300s
 volumes:
   zammad-data:
-
