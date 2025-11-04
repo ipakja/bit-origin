@@ -32,8 +32,8 @@ sudo ufw allow 22/tcp || true
 sudo ufw allow 51820/udp || true
 sudo ufw allow 3001/tcp || true     # Uptime-Kuma (LAN)
 sudo ufw allow 8080/tcp || true     # Zammad (LAN)
-sudo ufw allow 8081:8100/tcp || true# Nextcloud Range (LAN)
-yes | sudo ufw enable || true
+sudo ufw allow 8081:8100/tcp || true  # Nextcloud Range (LAN)
+echo "y" | sudo ufw enable || true
 
 sudo systemctl enable --now fail2ban || true
 
@@ -100,8 +100,9 @@ volumes:
 YAML
 
 # --- Health cron ---
-if ! grep -q "bit-origin/scripts/server-health.sh" <(crontab -l 2>/dev/null || true); then
-  (crontab -l 2>/dev/null; echo "*/15 * * * * /opt/bit-origin/scripts/server-health.sh >> /var/log/bit-origin-health.log 2>&1") | crontab -
+CRON_ENTRY="*/15 * * * * /opt/bit-origin/scripts/server-health.sh >> /var/log/bit-origin-health.log 2>&1"
+if ! crontab -l 2>/dev/null | grep -q "bit-origin/scripts/server-health.sh"; then
+  (crontab -l 2>/dev/null; echo "$CRON_ENTRY") | crontab -
 fi
 
 echo "=== SETUP COMPLETE ==="
