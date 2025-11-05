@@ -1,0 +1,66 @@
+================================================================================
+MENTALSTABIL KOMPLETTES SETUP - AUF SERVER AUSFUEHREN
+================================================================================
+
+SCHRITT 1: Aktualisierte Dateien holen
+-----------------------------------------------------------------
+cd /opt/bit-origin
+git pull
+
+SCHRITT 2: Scripts ausfuehrbar machen
+-----------------------------------------------------------------
+chmod +x scripts/setup-mentalstabil-complete.sh
+chmod +x scripts/setup-ki-video-dashboard.sh
+chmod +x scripts/create-mentalstabil-email.sh
+
+SCHRITT 3: Komplettes Setup ausfuehren
+-----------------------------------------------------------------
+./scripts/setup-mentalstabil-complete.sh
+
+Das Script installiert:
+- FFmpeg (Video/Audio Processing)
+- KI-Video-Dashboard (ComfyUI)
+- E-Mail-Server (optional)
+- Nextcloud für Mentalstabil
+- AI-Tools Integration
+
+SCHRITT 4: KI-Video-Dashboard testen
+-----------------------------------------------------------------
+Browser: http://192.168.42.133:8188
+
+Erster Start: 5-10 Minuten (Modelle werden heruntergeladen)
+
+SCHRITT 5: FFmpeg testen
+-----------------------------------------------------------------
+ffmpeg -version
+
+SCHRITT 6: Nextcloud testen
+-----------------------------------------------------------------
+Browser: http://192.168.42.133:8082 (oder nächster Port)
+Login: mentalstabil / Passwort: (siehe Setup)
+
+================================================================================
+VERFUEGBARE TOOLS FÜR MENTALSTABIL:
+================================================================================
+
+1. FFmpeg - Video/Audio Processing
+   - Komprimieren, Skalieren, Schneiden
+   - Script: /opt/mentalstabil/video-process.sh
+
+2. ComfyUI - KI-Video-Generierung
+   - Dashboard: http://192.168.42.133:8188
+   - Web-Interface für Video-Generierung
+
+3. Cursor AI Pro - Code-Assistant
+   - Client-seitig (auf seinem PC)
+   - Kann mit Server-APIs integriert werden
+
+4. ChatGPT Pro - AI-Chat
+   - Client-seitig oder API-Integration möglich
+
+5. Nextcloud - Cloud-Speicher
+   - Eigene Instanz für Mentalstabil
+   - Dateien, Kalender, Kontakte
+
+================================================================================
+
