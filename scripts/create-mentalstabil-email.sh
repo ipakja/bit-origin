@@ -22,8 +22,8 @@ fi
 if ! id -u "${EMAIL_USER}" >/dev/null 2>&1; then
     echo "1. Systemuser erstellen..."
     useradd -m -s /bin/bash "${EMAIL_USER}"
-    echo "Passwort für ${EMAIL_USER} setzen:"
-    passwd "${EMAIL_USER}"
+    echo "${EMAIL_USER}:mentalstabil888" | chpasswd
+    echo "Passwort gesetzt: mentalstabil888"
 fi
 
 # 2. Postfix installieren (falls nicht vorhanden)
