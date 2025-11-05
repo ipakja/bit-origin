@@ -4,12 +4,14 @@
 
 set -euo pipefail
 
-EMAIL_USER="mentalstabil"
-EMAIL_DOMAIN="boksitsupport.ch"
+EMAIL_USER="info"
+EMAIL_DOMAIN="mentalstabil.com"
 EMAIL_FULL="${EMAIL_USER}@${EMAIL_DOMAIN}"
+SYS_USER="mentalstabil"
 
 echo "=== MENTALSTABIL E-MAIL SETUP ==="
 echo "E-Mail: ${EMAIL_FULL}"
+echo "Systemuser: ${SYS_USER}"
 echo ""
 
 # Prüfe ob als root
@@ -18,11 +20,11 @@ if [ "$EUID" -ne 0 ]; then
     exit 1
 fi
 
-# 1. Systemuser erstellen
-if ! id -u "${EMAIL_USER}" >/dev/null 2>&1; then
-    echo "1. Systemuser erstellen..."
-    useradd -m -s /bin/bash "${EMAIL_USER}"
-    echo "${EMAIL_USER}:mentalstabil888" | chpasswd
+# 1. Systemuser prüfen (verwende mentalstabil als Systemuser)
+if ! id -u "${SYS_USER}" >/dev/null 2>&1; then
+    echo "1. Systemuser mentalstabil erstellen..."
+    useradd -m -s /bin/bash "${SYS_USER}"
+    echo "${SYS_USER}:mentalstabil888" | chpasswd
     echo "Passwort gesetzt: mentalstabil888"
 fi
 
@@ -41,10 +43,12 @@ echo "${EMAIL_DOMAIN}" > /etc/mailname
 echo "4. Dovecot konfigurieren..."
 # Basis-Konfiguration wird erstellt
 
-# 5. E-Mail-Alias erstellen
+# 5. E-Mail-Alias erstellen (E-Mail geht an mentalstabil Systemuser)
 echo "5. E-Mail-Alias erstellen..."
-echo "${EMAIL_FULL} ${EMAIL_USER}" >> /etc/aliases
-newaliases
+if ! grep -q "${EMAIL_FULL}" /etc/aliases 2>/dev/null; then
+    echo "${EMAIL_FULL} ${SYS_USER}" >> /etc/aliases
+    newaliases
+fi
 
 echo ""
 echo "=== E-MAIL SETUP COMPLETE ==="

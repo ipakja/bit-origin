@@ -4,13 +4,14 @@
 
 set -euo pipefail
 
-EMAIL_USER="mentalstabil"
-EMAIL_DOMAIN="boksitsupport.ch"
+EMAIL_USER="info"
+EMAIL_DOMAIN="mentalstabil.com"
 EMAIL_FULL="${EMAIL_USER}@${EMAIL_DOMAIN}"
+SYS_USER="mentalstabil"
 PASSWORD="mentalstabil888"
 
 echo "=== MENTALSTABIL SETUP ==="
-echo "Benutzer: ${EMAIL_USER}"
+echo "Systemuser: ${SYS_USER}"
 echo "Passwort: ${PASSWORD}"
 echo "E-Mail: ${EMAIL_FULL}"
 echo ""
@@ -25,12 +26,12 @@ fi
 echo "1. Kunde mentalstabil erstellen..."
 BASE="/opt/bit-origin"
 if [ -f "${BASE}/scripts/create-customer.sh" ]; then
-    bash "${BASE}/scripts/create-customer.sh" "${EMAIL_USER}" "${PASSWORD}"
+    bash "${BASE}/scripts/create-customer.sh" "${SYS_USER}" "${PASSWORD}"
 else
     echo "WARN: create-customer.sh nicht gefunden, manuell erstellen..."
-    if ! id -u "${EMAIL_USER}" >/dev/null 2>&1; then
-        useradd -m -s /bin/bash "${EMAIL_USER}"
-        echo "${EMAIL_USER}:${PASSWORD}" | chpasswd
+    if ! id -u "${SYS_USER}" >/dev/null 2>&1; then
+        useradd -m -s /bin/bash "${SYS_USER}"
+        echo "${SYS_USER}:${PASSWORD}" | chpasswd
     fi
 fi
 
@@ -52,14 +53,14 @@ if ! grep -q "${EMAIL_FULL}" /etc/aliases 2>/dev/null; then
     newaliases
 fi
 
-# 4. Mail-Verzeichnis
-mkdir -p "/home/${EMAIL_USER}/Maildir"
-chown -R "${EMAIL_USER}:${EMAIL_USER}" "/home/${EMAIL_USER}/Maildir"
+# 4. Mail-Verzeichnis (verwende mentalstabil Systemuser)
+mkdir -p "/home/${SYS_USER}/Maildir"
+chown -R "${SYS_USER}:${SYS_USER}" "/home/${SYS_USER}/Maildir"
 
 echo ""
 echo "=== SETUP COMPLETE ==="
 echo ""
-echo "Benutzer: ${EMAIL_USER}"
+echo "Systemuser: ${SYS_USER}"
 echo "Passwort: ${PASSWORD}"
 echo "E-Mail: ${EMAIL_FULL}"
 echo ""
