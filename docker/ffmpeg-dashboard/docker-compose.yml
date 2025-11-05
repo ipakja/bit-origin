@@ -1,0 +1,12 @@
+version: "3.9"
+services:
+  ffmpeg-dashboard:
+    image: nginx:alpine
+    container_name: ffmpeg-dashboard
+    restart: unless-stopped
+    ports:
+      - "8189:80"
+    volumes:
+      - ./dashboard:/usr/share/nginx/html
+volumes:
+
