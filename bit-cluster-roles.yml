@@ -1,0 +1,515 @@
+# BIT Cluster - Server-Rollen-Configs
+# Boks IT Support - Schweizer Bankenstandard
+# Konkrete Server-Rollen mit vorbereiteten Playbooks
+
+---
+# BIT Origin - Control & Orchestration Node
+- name: BIT Origin - Control Node Setup
+  hosts: bit-origin
+  become: yes
+  vars:
+    node_role: control
+    node_ip: 10.10.0.10
+  tasks:
+    - name: Install control packages
+      apt:
+        name:
+          - ansible
+          - python3-flask
+          - python3-psutil
+          - git
+          - jq
+        state: present
+    
+    - name: Create cluster directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      loop:
+        - /opt/bit-origin/cluster
+        - /opt/bit-origin/api/cluster
+        - /opt/bit-origin/gitops
+        - /opt/bit-origin/reports
+    
+    - name: Configure WireGuard mesh
+      copy:
+        content: |
+          [Interface]
+          Address = {{ node_ip }}/24
+          ListenPort = 51820
+          PrivateKey = {{ vault('bit-origin-private-key') }}
+          
+          [Peer]
+          PublicKey = {{ vault('bit-vault-public-key') }}
+          AllowedIPs = 10.10.0.20/32
+          Endpoint = 10.10.0.20:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-sense-public-key') }}
+          AllowedIPs = 10.10.0.30/32
+          Endpoint = 10.10.0.30:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-horizon-public-key') }}
+          AllowedIPs = 10.10.0.40/32
+          Endpoint = 10.10.0.40:51820
+        dest: /etc/wireguard/wg0.conf
+        mode: '0600'
+    
+    - name: Start WireGuard
+      systemctl:
+        name: wg-quick@wg0
+        state: started
+        enabled: yes
+    
+    - name: Configure cluster API
+      copy:
+        content: |
+          from flask import Flask, jsonify, request
+          import subprocess
+          import datetime
+          
+          app = Flask(__name__)
+          
+          @app.route("/cluster/health", methods=["GET"])
+          def cluster_health():
+              return jsonify({
+                  "status": "ok",
+                  "timestamp": datetime.datetime.now().isoformat(),
+                  "node": "bit-origin",
+                  "role": "control"
+              })
+          
+          @app.route("/cluster/deploy", methods=["POST"])
+          def cluster_deploy():
+              data = request.get_json()
+              playbook = data.get("playbook", "cluster-hardening.yml")
+              
+              result = subprocess.run([
+                  "ansible-playbook", 
+                  f"~/ansible/bit-infra/playbooks/{playbook}",
+                  "-i", "~/ansible/bit-infra/inventories/cluster.yml"
+              ], capture_output=True, text=True)
+              
+              return jsonify({
+                  "status": "deployed",
+                  "playbook": playbook,
+                  "output": result.stdout
+              })
+          
+          if __name__ == "__main__":
+              app.run(host="0.0.0.0", port=5001)
+        dest: /opt/bit-origin/api/cluster/cluster_api.py
+        mode: '0755'
+    
+    - name: Start cluster API
+      systemctl:
+        name: bit-cluster-api
+        state: started
+        enabled: yes
+
+---
+# BIT Vault - Backup & Encryption Node
+- name: BIT Vault - Backup Node Setup
+  hosts: bit-vault
+  become: yes
+  vars:
+    node_role: backup
+    node_ip: 10.10.0.20
+  tasks:
+    - name: Install backup packages
+      apt:
+        name:
+          - borgbackup
+          - borgmatic
+          - rclone
+          - sshfs
+          - rsync
+        state: present
+    
+    - name: Create backup directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0700'
+      loop:
+        - /data/backups
+        - /data/backups/core
+        - /data/backups/clients
+        - /data/backups/encrypted
+        - /data/backups/offsite
+    
+    - name: Initialize Borg repositories
+      command: borg init --encryption=repokey {{ item }}
+      args:
+        creates: "{{ item }}"
+      loop:
+        - /data/backups/core
+        - /data/backups/clients
+        - /data/backups/encrypted
+    
+    - name: Configure borgmatic
+      copy:
+        content: |
+          location:
+            source_directories:
+              - /etc
+              - /opt/bit-origin
+              - /home
+            repositories:
+              - /data/backups/core
+          retention:
+            keep_daily: 7
+            keep_weekly: 4
+            keep_monthly: 6
+            keep_yearly: 2
+          storage:
+            encryption_passphrase: "{{ vault('borg-encryption-passphrase') }}"
+          hooks:
+            before_backup:
+              - echo "Starting backup at $(date)"
+            after_backup:
+              - echo "Backup completed at $(date)"
+        dest: /etc/borgmatic/config.yaml
+        mode: '0600'
+    
+    - name: Setup backup automation
+      cron:
+        name: "Borg backup"
+        minute: "0"
+        hour: "2"
+        job: "/usr/bin/borgmatic"
+    
+    - name: Configure WireGuard mesh
+      copy:
+        content: |
+          [Interface]
+          Address = {{ node_ip }}/24
+          ListenPort = 51820
+          PrivateKey = {{ vault('bit-vault-private-key') }}
+          
+          [Peer]
+          PublicKey = {{ vault('bit-origin-public-key') }}
+          AllowedIPs = 10.10.0.10/32
+          Endpoint = 10.10.0.10:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-sense-public-key') }}
+          AllowedIPs = 10.10.0.30/32
+          Endpoint = 10.10.0.30:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-horizon-public-key') }}
+          AllowedIPs = 10.10.0.40/32
+          Endpoint = 10.10.0.40:51820
+        dest: /etc/wireguard/wg0.conf
+        mode: '0600'
+    
+    - name: Start WireGuard
+      systemctl:
+        name: wg-quick@wg0
+        state: started
+        enabled: yes
+
+---
+# BIT Sense - Monitoring & AI Analytics Node
+- name: BIT Sense - Monitoring Node Setup
+  hosts: bit-sense
+  become: yes
+  vars:
+    node_role: monitoring
+    node_ip: 10.10.0.30
+  tasks:
+    - name: Install monitoring packages
+      apt:
+        name:
+          - netdata
+          - prometheus
+          - grafana-server
+          - python3-tensorflow
+          - python3-pandas
+          - python3-scikit-learn
+        state: present
+    
+    - name: Configure Netdata
+      copy:
+        content: |
+          [global]
+            memory mode = ram
+            history = 3600
+            update every = 1
+          [web]
+            bind to = 0.0.0.0:19999
+          [stream]
+            enabled = yes
+            destination = 10.10.0.10:19999
+        dest: /etc/netdata/netdata.conf
+        mode: '0644'
+    
+    - name: Configure Prometheus
+      copy:
+        content: |
+          global:
+            scrape_interval: 15s
+            evaluation_interval: 15s
+          scrape_configs:
+            - job_name: 'bit-cluster'
+              static_configs:
+                - targets: 
+                  - '10.10.0.10:19999'
+                  - '10.10.0.20:19999'
+                  - '10.10.0.30:19999'
+                  - '10.10.0.40:19999'
+            - job_name: 'bit-origin'
+              static_configs:
+                - targets: ['10.10.0.10:19999']
+            - job_name: 'bit-vault'
+              static_configs:
+                - targets: ['10.10.0.20:19999']
+            - job_name: 'bit-sense'
+              static_configs:
+                - targets: ['10.10.0.30:19999']
+            - job_name: 'bit-horizon'
+              static_configs:
+                - targets: ['10.10.0.40:19999']
+        dest: /etc/prometheus/prometheus.yml
+        mode: '0644'
+    
+    - name: Configure Grafana
+      copy:
+        content: |
+          [server]
+          http_port = 3000
+          root_url = http://10.10.0.30:3000/
+          
+          [security]
+          admin_user = admin
+          admin_password = {{ vault('grafana-admin-password') }}
+        dest: /etc/grafana/grafana.ini
+        mode: '0644'
+    
+    - name: Start monitoring services
+      systemctl:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - netdata
+        - prometheus
+        - grafana-server
+    
+    - name: Configure WireGuard mesh
+      copy:
+        content: |
+          [Interface]
+          Address = {{ node_ip }}/24
+          ListenPort = 51820
+          PrivateKey = {{ vault('bit-sense-private-key') }}
+          
+          [Peer]
+          PublicKey = {{ vault('bit-origin-public-key') }}
+          AllowedIPs = 10.10.0.10/32
+          Endpoint = 10.10.0.10:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-vault-public-key') }}
+          AllowedIPs = 10.10.0.20/32
+          Endpoint = 10.10.0.20:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-horizon-public-key') }}
+          AllowedIPs = 10.10.0.40/32
+          Endpoint = 10.10.0.40:51820
+        dest: /etc/wireguard/wg0.conf
+        mode: '0600'
+    
+    - name: Start WireGuard
+      systemctl:
+        name: wg-quick@wg0
+        state: started
+        enabled: yes
+
+---
+# BIT Horizon - Client VM Host Node
+- name: BIT Horizon - VM Host Node Setup
+  hosts: bit-horizon
+  become: yes
+  vars:
+    node_role: vmhost
+    node_ip: 10.10.0.40
+  tasks:
+    - name: Install Proxmox packages
+      apt:
+        name:
+          - proxmox-ve
+          - postfix
+          - open-iscsi
+          - qemu-guest-agent
+          - libvirt-clients
+          - virt-manager
+        state: present
+    
+    - name: Configure network bridges
+      copy:
+        content: |
+          auto vmbr10
+          iface vmbr10 inet static
+            address 10.20.0.1/24
+            bridge_ports none
+            bridge_stp off
+            bridge_fd 0
+          
+          auto vmbr11
+          iface vmbr11 inet static
+            address 10.21.0.1/24
+            bridge_ports none
+            bridge_stp off
+            bridge_fd 0
+          
+          auto vmbr12
+          iface vmbr12 inet static
+            address 10.22.0.1/24
+            bridge_ports none
+            bridge_stp off
+            bridge_fd 0
+        dest: /etc/network/interfaces.d/vm-bridges
+        mode: '0644'
+    
+    - name: Create VM templates directory
+      file:
+        path: /opt/bit-origin/vm-templates
+        state: directory
+        mode: '0755'
+    
+    - name: Create VM automation script
+      copy:
+        content: |
+          #!/bin/bash
+          # BIT Horizon VM Automation
+          set -euo pipefail
+          
+          CLIENT_NAME="$1"
+          CLIENT_VLAN="$2"
+          VM_ID="$3"
+          
+          # Create VM from template
+          qm clone 9000 "$VM_ID" --name "client-$CLIENT_NAME"
+          
+          # Configure network
+          qm set "$VM_ID" --net0 virtio,bridge=vmbr"$CLIENT_VLAN"
+          
+          # Configure resources
+          qm set "$VM_ID" --memory 2048 --cores 2
+          
+          # Start VM
+          qm start "$VM_ID"
+          
+          echo "✅ VM client-$CLIENT_NAME (ID: $VM_ID) created and started"
+        dest: /usr/local/bin/create-client-vm
+        mode: '0755'
+    
+    - name: Create VM template script
+      copy:
+        content: |
+          #!/bin/bash
+          # BIT Horizon VM Template Creation
+          set -euo pipefail
+          
+          TEMPLATE_NAME="$1"
+          TEMPLATE_ID="$2"
+          
+          # Create template VM
+          qm create "$TEMPLATE_ID" --name "$TEMPLATE_NAME" --memory 1024 --cores 1
+          
+          # Configure template
+          qm set "$TEMPLATE_ID" --net0 virtio,bridge=vmbr10
+          qm set "$TEMPLATE_ID" --scsi0 local-lvm:32
+          qm set "$TEMPLATE_ID" --boot c --bootdisk scsi0
+          
+          # Convert to template
+          qm template "$TEMPLATE_ID"
+          
+          echo "✅ Template $TEMPLATE_NAME (ID: $TEMPLATE_ID) created"
+        dest: /usr/local/bin/create-vm-template
+        mode: '0755'
+    
+    - name: Configure WireGuard mesh
+      copy:
+        content: |
+          [Interface]
+          Address = {{ node_ip }}/24
+          ListenPort = 51820
+          PrivateKey = {{ vault('bit-horizon-private-key') }}
+          
+          [Peer]
+          PublicKey = {{ vault('bit-origin-public-key') }}
+          AllowedIPs = 10.10.0.10/32
+          Endpoint = 10.10.0.10:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-vault-public-key') }}
+          AllowedIPs = 10.10.0.20/32
+          Endpoint = 10.10.0.20:51820
+          
+          [Peer]
+          PublicKey = {{ vault('bit-sense-public-key') }}
+          AllowedIPs = 10.10.0.30/32
+          Endpoint = 10.10.0.30:51820
+        dest: /etc/wireguard/wg0.conf
+        mode: '0600'
+    
+    - name: Start WireGuard
+      systemctl:
+        name: wg-quick@wg0
+        state: started
+        enabled: yes
+
+---
+# Security Policy Federation für alle Nodes
+- name: Security Policy Federation
+  hosts: bitcluster
+  become: yes
+  tasks:
+    - name: Apply Swiss security standards
+      copy:
+        content: |
+          # BIT Origin - Schweizer Bankenstandard
+          # DSGVO-konforme Sicherheitsrichtlinien
+          
+          # SSH Hardening
+          PasswordAuthentication no
+          PermitRootLogin no
+          PubkeyAuthentication yes
+          MaxAuthTries 3
+          MaxSessions 3
+          LoginGraceTime 30
+          ClientAliveInterval 300
+          ClientAliveCountMax 2
+          
+          # Firewall Rules
+          UFW_DEFAULT_FORWARD_POLICY="DROP"
+          UFW_DEFAULT_INPUT_POLICY="DENY"
+          UFW_DEFAULT_OUTPUT_POLICY="ACCEPT"
+          
+          # Audit Configuration
+          AUDIT_RULES="/etc/audit/rules.d/bit-origin.rules"
+          AUDIT_LOG="/var/log/audit/audit.log"
+        dest: /etc/bit-origin/security-policy.conf
+        mode: '0600'
+    
+    - name: Apply security policy
+      command: /opt/bit-origin/security/apply-policy.sh
+      args:
+        creates: /var/log/security-policy-applied
+    
+    - name: Setup daily security check
+      cron:
+        name: "Daily security check"
+        minute: "0"
+        hour: "3"
+        job: "/opt/bit-origin/security/daily-check.sh"
+
+
+
+

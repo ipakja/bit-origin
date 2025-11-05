@@ -1,0 +1,36 @@
+name: Security Check
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  security-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Check for secrets
+        run: |
+          # Prüfe auf Passwörter
+          if grep -r "password.*=" --include="*.sh" --include="*.yml" --include="*.yaml" . | grep -v ".gitignore" | grep -v "CHANGE_ME"; then
+            echo "ERROR: Passwörter gefunden in Code!"
+            exit 1
+          fi
+          
+          # Prüfe auf Private Keys
+          if find . -name "*.key" -o -name "*.pem" -o -name "*.priv" | grep -v ".gitignore"; then
+            echo "ERROR: Private Keys gefunden!"
+            exit 1
+          fi
+          
+          # Prüfe auf .env Dateien (außer .example)
+          if find . -name ".env" -not -name ".env.example" | grep -v ".gitignore"; then
+            echo "ERROR: .env Dateien gefunden!"
+            exit 1
+          fi
+          
+          echo "Security check passed!"
+

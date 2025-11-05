@@ -1,0 +1,64 @@
+# BIT-Lab .gitignore
+# Secrets und sensible Dateien niemals committen!
+
+# Konfiguration mit Secrets
+vars.env
+.secrets
+*.key
+*.pem
+*.p12
+*.pfx
+
+# SSH Keys
+id_rsa
+id_ed25519
+*.pub
+!vars.env.example
+
+# Backups
+artifacts/backups/
+*.qcow2
+*.img
+*.iso
+
+# Logs
+artifacts/*.log
+*.log
+
+# Temporäre Dateien
+*.tmp
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.backup
+*.tfvars
+.terraform.lock.hcl
+
+# Ansible
+*.retry
+.vault_pass
+
+# Cloud-Init generierte Dateien
+/tmp/network-*.xml
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+
+

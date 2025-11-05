@@ -1,0 +1,82 @@
+Dateien die gelöscht werden:
+
+1. VMWARE-*.txt (51 Dateien) - temporäre Problemlösungen
+2. VMWARE-*.md (20 Dateien) - temporäre Dokumentationen
+3. Temporäre .txt Dateien:
+   - JETZT-TUN.txt
+   - WEITER-ARBEITEN.txt
+   - JETZT-AUF-SERVER-AUSFUEHREN.txt
+   - AUF-SERVER-AUSFUEHREN.txt
+   - DEPLOY-NOW.txt
+   - SCHRITT-FUER-SCHRITT.txt
+   - GITHUB-PUSH-NOW.txt
+   - FEHLER-BEHOBEN.txt
+   - ZAMMAD-BEHEBEN.txt
+   - ZAMMAD-SKIP.txt
+   - SVEN-ANNA-LOESCHEN.txt
+   - FFMPEG-DASHBOARD-SETUP.txt
+   - FFMPEG-DASHBOARD-FIX.txt
+   - FFMPEG-DASHBOARD-UPDATE.txt
+   - GIT-PULL-FIX.txt
+   - MENTALSTABIL-EMAIL-SETUP.txt
+   - MENTALSTABIL-INSTALLATION.txt
+   - MENTALSTABIL-SETUP-NOW.txt
+   - MENTALSTABIL-MONITOR.txt
+   - SERVER-INSTALLATION-KOMPLETT.txt
+
+4. Persönliche Dateien:
+   - ich.png
+   - ich - Kopie.png
+   - PHOTO.png
+   - quer.png
+   - titelbild.png
+   - CapCut_7559359098354008125_installer.exe
+   - node-v22.20.0-x64.msi
+   - debian-13.1.0-amd64-netinst.iso
+   - ~$ks_IT_Support_Broschuere_Final.docx
+   - Boks_IT_Support_Broschuere_Final.docx
+   - Boks-IT-Support-Brochure.pdf
+   - Boks-IT-Support-Broschuere.pdf
+
+5. Alte Dokumentation (in PROJEKT-ZUSAMMENFASSUNG.md zusammengefasst):
+   - bit-origin-20-user-server-guide.md
+   - BIT-ORIGIN-COMPLETE-20-USER-SERVER.md
+   - bit-origin-laptop-setup-windows.md
+   - bit-origin-vmware-setup.md
+   - bit-origin-production-server-setup.md
+   - bit-origin-hardware-shopping-list.md
+   - bit-origin-implementation-plan.md
+   - bit-origin-roi-roadmap.md
+   - bit-origin-website-integration.md
+   - green-server-setup.md
+   - QUICKSTART-20-USER.md
+   - QUICKSTART-20-USER-COMPLETE.md
+   - QUICKSTART-GREEN.md
+   - QUICKSTART-VMWARE.md
+   - QUICK-START.md
+   - PROJEKT-UEBERSICHT.md
+   - PROJEKT-STRUKTUR.md
+   - CLEANUP-COMPLETE.md
+   - CURSOR-SETUP-ANLEITUNG.md
+   - MENTALSTABIL-SETUP.md
+   - GITHUB-PUSH-ANLEITUNG.md
+   - GITHUB-SETUP.md
+   - GITHUB-STRUCTURE.md
+   - BACKUP-SECRETS.md
+   - KONTAKT-INFO.md
+
+Behalten:
+- README.md
+- PROJEKT-ZUSAMMENFASSUNG.md
+- GITHUB-SERVER-IDEE.md
+- LICENSE
+- CHANGELOG.md
+- CONTRIBUTING.md
+- SECURITY.md
+- scripts/
+- docker/
+- lib/
+- config/
+- docs/
+- backup/
+- Website-Dateien (HTML, CSS, JS)

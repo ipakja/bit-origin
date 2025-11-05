@@ -1,0 +1,223 @@
+/* ==================== ANIMATION LIBRARY ==================== */
+/* SOLID Principles Applied: Single Responsibility, Open/Closed */
+
+/* ==================== KEYFRAME ANIMATIONS ==================== */
+/* Single Responsibility: Each animation has one specific purpose */
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translate3d(-60px, 0, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translate3d(60px, 0, 0);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0);
+    }
+}
+
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes rotateIn {
+    from {
+        opacity: 0;
+        transform: rotate(-10deg) scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: rotate(0deg) scale(1);
+    }
+}
+
+@keyframes bounceIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.3);
+    }
+    50% {
+        opacity: 1;
+        transform: scale(1.05);
+    }
+    70% {
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translate3d(0, 0, 0);
+    }
+    50% {
+        transform: translate3d(0, -8px, 0);
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(200, 165, 72, 0.3);
+    }
+    50% {
+        box-shadow: 0 0 30px rgba(200, 165, 72, 0.5);
+    }
+}
+
+@keyframes luxuryPulse {
+    0%, 100% { 
+        transform: scale3d(1, 1, 1);
+        filter: brightness(1);
+    }
+    50% { 
+        transform: scale3d(1.02, 1.02, 1);
+        filter: brightness(1.1);
+    }
+}
+
+@keyframes luxuryShimmer {
+    0% { transform: translateX(-100%) skewX(-15deg); }
+    100% { transform: translateX(100%) skewX(-15deg); }
+}
+
+@keyframes gentleGlow {
+    0%, 100% { opacity: 0.3; }
+    50% { opacity: 0.6; }
+}
+
+@keyframes shimmer {
+    0% { background-position: -200% 0; }
+    100% { background-position: 200% 0; }
+}
+
+/* ==================== ANIMATION UTILITY CLASSES ==================== */
+/* Open/Closed Principle: Easy to extend with new animations without modifying existing ones */
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.8s ease-out;
+}
+
+.animate-scale-in {
+    animation: scaleIn 0.6s ease-out;
+}
+
+.animate-rotate-in {
+    animation: rotateIn 0.8s ease-out;
+}
+
+.animate-bounce-in {
+    animation: bounceIn 0.8s ease-out;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.animate-luxury-pulse {
+    animation: luxuryPulse 3s ease-in-out infinite;
+}
+
+/* ==================== HOVER ANIMATIONS ==================== */
+/* Single Responsibility: Each hover effect has one specific purpose */
+
+.service-card:hover {
+    animation: pulse 0.6s ease-in-out;
+}
+
+.btn:hover {
+    animation: scaleIn 0.3s ease-out;
+}
+
+/* ==================== PERFORMANCE OPTIMIZATIONS ==================== */
+/* GPU acceleration for smooth animations */
+.animate-fade-in-up,
+.animate-slide-in-left,
+.animate-slide-in-right,
+.animate-scale-in,
+.animate-rotate-in,
+.animate-bounce-in,
+.animate-pulse,
+.animate-float,
+.animate-glow,
+.animate-luxury-pulse {
+    will-change: transform, opacity, filter;
+}
+
+/* ==================== REDUCED MOTION SUPPORT ==================== */
+/* Accessibility: Respect user preferences for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-fade-in-up,
+    .animate-slide-in-left,
+    .animate-slide-in-right,
+    .animate-scale-in,
+    .animate-rotate-in,
+    .animate-bounce-in,
+    .animate-pulse,
+    .animate-float,
+    .animate-glow,
+    .animate-luxury-pulse {
+        animation: none;
+    }
+    
+    .service-card:hover,
+    .btn:hover {
+        animation: none;
+    }
+}
+

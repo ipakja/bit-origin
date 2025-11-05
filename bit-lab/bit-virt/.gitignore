@@ -1,0 +1,33 @@
+# BIT Virtual Infrastructure .gitignore
+
+# Konfiguration mit Secrets
+vars.env
+*.key
+*.pem
+
+# VM-Images
+vms/*.qcow2
+vm-templates/*.qcow2
+
+# Cloud-Init Seeds
+vm-templates/seed/*.iso
+
+# ZFS vDisks (nur auf Host)
+/var/lib/libvirt/images/bitlab-disk*.img
+
+# Logs
+*.log
+/var/log/bit-*.log
+
+# Temporäre Dateien
+*.tmp
+*.swp
+*~
+.DS_Store
+
+# Backup-Dateien
+*.bak
+*.backup
+
+
+

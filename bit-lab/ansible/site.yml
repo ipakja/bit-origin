@@ -1,0 +1,199 @@
+---
+# BIT-Lab Ansible Playbook
+# Orchestriert Konfiguration aller VMs
+#
+# Verwendung:
+#   ansible-playbook -i inventory.ini site.yml
+#   ansible-playbook -i inventory.ini site.yml --limit bit_core
+#   ansible-playbook -i inventory.ini site.yml --tags security
+
+- name: BIT-Lab Konfiguration
+  hosts: bitlab
+  become: yes
+  become_user: root
+  
+  vars:
+    # Timezone
+    timezone: Europe/Zurich
+    
+    # Automatische Updates
+    auto_updates: true
+    
+    # Fail2ban
+    enable_fail2ban: true
+    
+    # Netdata
+    enable_netdata: true
+
+  tasks:
+    - name: Prüfe Ansible-Version
+      fail:
+        msg: "Ansible >= 2.9 erforderlich"
+      when: ansible_version.major < 2 or (ansible_version.major == 2 and ansible_version.minor < 9)
+
+    - name: Aktualisiere Paket-Listen
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Installiere Basis-Pakete
+      apt:
+        name:
+          - curl
+          - wget
+          - git
+          - vim
+          - htop
+          - net-tools
+          - iputils-ping
+          - dnsutils
+          - ca-certificates
+          - apt-transport-https
+          - gnupg
+          - lsb-release
+        state: present
+
+    - name: Konfiguriere Timezone
+      timezone:
+        name: "{{ timezone }}"
+
+    - name: Aktiviere automatische Updates
+      copy:
+        content: |
+          APT::Periodic::Update-Package-Lists "1";
+          APT::Periodic::Unattended-Upgrade "1";
+          APT::Periodic::Download-Upgrade-Packages "1";
+          APT::Periodic::AutocleanInterval "7";
+          Unattended-Upgrade::Automatic-Reboot "false";
+        dest: /etc/apt/apt.conf.d/50unattended-upgrades-local
+        mode: '0644'
+      when: auto_updates | bool
+
+    - name: Installiere und konfiguriere Fail2ban
+      block:
+        - name: Installiere Fail2ban
+          apt:
+            name: fail2ban
+            state: present
+        
+        - name: Konfiguriere Fail2ban Jail
+          copy:
+            content: |
+              [DEFAULT]
+              bantime = 3600
+              findtime = 600
+              maxretry = 5
+              
+              [sshd]
+              enabled = true
+              port = ssh
+              logpath = %(sshd_log)s
+              backend = %(sshd_backend)s
+            dest: /etc/fail2ban/jail.local
+            mode: '0644'
+        
+        - name: Aktiviere Fail2ban
+          systemd:
+            name: fail2ban
+            enabled: yes
+            state: started
+      when: enable_fail2ban | bool
+
+    - name: Installiere Netdata
+      shell: |
+        bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive --stable-channel
+      when: enable_netdata | bool
+      ignore_errors: yes
+
+    - name: Konfiguriere UFW Firewall
+      ufw:
+        rule: "{{ item.rule }}"
+        port: "{{ item.port }}"
+        proto: "{{ item.proto }}"
+        comment: "{{ item.comment }}"
+      loop:
+        - { rule: allow, port: '22', proto: tcp, comment: 'SSH' }
+      state: enabled
+
+    # Rollen-spezifische Tasks
+    - name: Konfiguriere bit-core (DNS/DHCP)
+      block:
+        - name: Installiere BIND9
+          apt:
+            name:
+              - bind9
+              - bind9utils
+              - bind9-doc
+            state: present
+          when: inventory_hostname == 'bit-core'
+        
+        - name: Installiere ISC DHCP Server
+          apt:
+            name: isc-dhcp-server
+            state: present
+          when: inventory_hostname == 'bit-core'
+        
+        - name: Aktiviere Services
+          systemd:
+            name: "{{ item }}"
+            enabled: yes
+            state: started
+          loop:
+            - bind9
+            - isc-dhcp-server
+          when: inventory_hostname == 'bit-core'
+      when: inventory_hostname == 'bit-core'
+
+    - name: Konfiguriere bit-flow (Automation)
+      block:
+        - name: Installiere Python-Pakete
+          apt:
+            name:
+              - python3
+              - python3-pip
+              - python3-venv
+            state: present
+          when: inventory_hostname == 'bit-flow'
+        
+        - name: Installiere PowerShell Core
+          shell: |
+            curl -L https://aka.ms/Install-PowerShell.sh | bash
+          when: inventory_hostname == 'bit-flow'
+          ignore_errors: yes
+      when: inventory_hostname == 'bit-flow'
+
+    - name: Konfiguriere bit-vault (Storage)
+      block:
+        - name: Installiere Storage-Pakete
+          apt:
+            name:
+              - nfs-kernel-server
+              - samba
+              - borgbackup
+              - rsync
+              - cryptsetup
+            state: present
+          when: inventory_hostname == 'bit-vault'
+      when: inventory_hostname == 'bit-vault'
+
+- name: BIT-Lab Gateway Konfiguration
+  hosts: bit_gateway
+  become: yes
+  become_user: root
+  
+  tasks:
+    - name: Aktiviere IP-Forwarding
+      sysctl:
+        name: net.ipv4.ip_forward
+        value: '1'
+        state: present
+        sysctl_set: yes
+        reload: yes
+    
+    - name: Konfiguriere NAT (Beispiel)
+      # Hier können iptables-Regeln hinzugefügt werden
+      debug:
+        msg: "NAT-Konfiguration muss manuell angepasst werden"
+
+
+

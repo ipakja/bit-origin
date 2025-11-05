@@ -1,0 +1,426 @@
+/* ==================== MAIN CSS - SOLID PRINCIPLES APPLIED ==================== */
+
+/* Import component libraries */
+@import url('components.css');
+@import url('animations.css');
+
+/* ==================== CSS VARIABLES ==================== */
+/* Single Responsibility: Variables are organized by purpose */
+:root {
+    /* Color System */
+    --anthrazit: #1A1B1C;
+    --gold: #C8A548;
+    --gold-hell: #E2C463;
+    --weiss: #FFFFFF;
+    --text-hell: #F8F8F8;
+    --text-dunkel: #1A1A1A;
+    
+    /* Legacy Variables for Compatibility */
+    --background: var(--anthrazit);
+    --secondary-bg: #202020;
+    --primary: var(--gold);
+    --primary-hover: var(--gold-hell);
+    --secondary: var(--weiss);
+    --accent: var(--gold);
+    --text-primary: var(--text-hell);
+    --text-secondary: var(--gold);
+    --white: var(--anthrazit);
+    --card-bg: #202020;
+    --card-shadow: rgba(0, 0, 0, 0.6);
+    --card-border: var(--gold);
+    --success: #3FA34D;
+    --warning: var(--gold);
+    --error: #C44536;
+    --hero-bg: var(--anthrazit);
+    --hero-text: var(--weiss);
+    --hero-accent: var(--gold);
+    
+    /* Logo Colors */
+    --logo-bg-light: #F8F6F2;
+    --logo-bg-dark: #121110;
+    --logo-text-light: #121110;
+    --logo-text-dark: #F4EFEA;
+    --logo-accent: #D4A017;
+    --logo-accent-dark: #C89B3C;
+    
+    /* Typography */
+    --font-primary: 'Lato', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-display: 'Playfair Display', Georgia, serif;
+    
+    /* Spacing System */
+    --space-1: 0.25rem;
+    --space-2: 0.5rem;
+    --space-3: 0.75rem;
+    --space-4: 1rem;
+    --space-5: 1.25rem;
+    --space-6: 1.5rem;
+    --space-8: 2rem;
+    --space-10: 2.5rem;
+    --space-12: 3rem;
+    --space-16: 4rem;
+    --space-20: 5rem;
+    --space-24: 6rem;
+    
+    /* Shadow System */
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    
+    /* Transitions */
+    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ==================== LIGHT MODE ==================== */
+[data-theme="light"] {
+    --background: #FFFFFF;
+    --secondary-bg: #F3E3B3;
+    --primary: #C8A548;
+    --primary-hover: #D6B445;
+    --secondary: #000000;
+    --accent: #C8A548;
+    --text-primary: #000000;
+    --text-secondary: #333333;
+    --white: #FFFFFF;
+    --card-bg: #F3E3B3;
+    --card-shadow: rgba(26, 26, 26, 0.1);
+    --card-border: #C8A548;
+    --hero-bg: #FFFFFF;
+    --hero-text: #000000;
+    --hero-accent: #C8A548;
+}
+
+/* ==================== BASE STYLES ==================== */
+/* Single Responsibility: Base styles handle only fundamental styling */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-primary);
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--background);
+    transition: var(--transition);
+    overflow-x: hidden;
+}
+
+/* ==================== LAYOUT COMPONENTS ==================== */
+/* Open/Closed Principle: Layout components are open for extension */
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+}
+
+.hero {
+    padding: 5rem 1rem 3rem;
+    background: var(--hero-bg);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hero::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(200, 165, 72, 0.08) 50%, transparent 70%);
+    animation: luxuryShimmer 4s ease-in-out infinite;
+    z-index: 1;
+    will-change: transform;
+}
+
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 20%, rgba(200, 165, 72, 0.05) 0%, transparent 50%);
+    animation: gentleGlow 6s ease-in-out infinite;
+    z-index: 1;
+    will-change: opacity;
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 var(--space-6);
+    text-align: center;
+}
+
+.hero-grid {
+    display: block;
+}
+
+.hero-text h1 {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    animation: fadeInUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.3s both;
+    letter-spacing: -0.02em;
+    will-change: transform, opacity;
+}
+
+.hero-text .highlight {
+    color: var(--gold);
+    animation: luxuryPulse 3s ease-in-out infinite;
+    will-change: transform, filter;
+    display: inline-block;
+}
+
+.hero-bio {
+    font-size: 1.15rem;
+    line-height: 1.7;
+    color: var(--text-primary);
+    margin-bottom: 2.5rem;
+    max-width: 750px;
+    margin-left: auto;
+    margin-right: auto;
+    animation: fadeInUp 1.2s ease-out 1s both;
+    font-weight: 400;
+    letter-spacing: 0.02em;
+}
+
+.hero-buttons {
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+/* ==================== SERVICES GRID ==================== */
+.services {
+    text-align: center;
+    padding: 100px 1rem 4rem;
+    background: var(--background);
+    transition: var(--transition);
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--space-8);
+    margin-bottom: var(--space-16);
+}
+
+.service-card h3 {
+    color: var(--weiss);
+    margin-bottom: 0.5rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.service-card p {
+    color: var(--text-hell);
+    font-size: 0.95rem;
+    margin-bottom: 0.8rem;
+}
+
+.service-price {
+    color: var(--gold);
+    font-weight: 700;
+    font-size: 1.125rem;
+}
+
+/* ==================== EXPERTISE CATEGORIES ==================== */
+.expertise-category {
+    margin-bottom: var(--space-16);
+    padding: var(--space-8) 0;
+    border-bottom: 1px solid rgba(200, 165, 72, 0.2);
+}
+
+.expertise-category:last-child {
+    border-bottom: none;
+}
+
+.category-title {
+    font-family: var(--font-display);
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--space-3);
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.category-description {
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
+    font-style: italic;
+    max-width: 600px;
+}
+
+/* ==================== HUMAN FACTOR SECTION ==================== */
+.human-factor {
+    padding: var(--space-20) 0;
+    background: var(--secondary-bg);
+    transition: var(--transition);
+}
+
+.human-factor-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.human-factor-text p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
+    text-align: left;
+}
+
+.human-factor-text p:last-child {
+    margin-bottom: 0;
+}
+
+/* ==================== WHY BIT SERVICES SECTION ==================== */
+.why-bit-services {
+    padding: var(--space-20) 0;
+    background: var(--secondary-bg);
+    transition: var(--transition);
+}
+
+.why-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.why-text p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: var(--space-6);
+    text-align: left;
+}
+
+.why-text p:last-child {
+    margin-bottom: 0;
+}
+
+.why-text strong {
+    color: var(--gold);
+    font-weight: 600;
+}
+
+/* ==================== CTA SECTION ==================== */
+.cta-section {
+    padding: var(--space-20) 0;
+    background: var(--background);
+    text-align: center;
+}
+
+.cta-content h2 {
+    font-family: var(--font-display);
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.cta-content p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-8);
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cta-buttons {
+    display: flex;
+    gap: var(--space-4);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* ==================== FOOTER ==================== */
+.footer {
+    background: var(--background);
+    color: var(--text-primary);
+    padding: var(--space-12) 0 var(--space-8);
+}
+
+.footer-bottom {
+    border-top: 1px solid var(--accent);
+    padding-top: var(--space-8);
+    text-align: center;
+    color: var(--text-primary);
+}
+
+/* ==================== RESPONSIVE DESIGN ==================== */
+/* Single Responsibility: Each media query handles one specific breakpoint */
+
+@media (max-width: 768px) {
+    .hero-text h1 {
+        font-size: 2.5rem;
+    }
+    
+    .hero-bio {
+        font-size: 1rem;
+    }
+    
+    .hero-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .category-title {
+        font-size: 1.5rem;
+    }
+    
+    .human-factor-text p,
+    .why-text p {
+        font-size: 1rem;
+    }
+    
+    .cta-content h2 {
+        font-size: 1.8rem;
+    }
+    
+    .cta-buttons {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-text h1 {
+        font-size: 2rem;
+    }
+    
+    .hero-bio {
+        font-size: 0.95rem;
+    }
+    
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+}
+

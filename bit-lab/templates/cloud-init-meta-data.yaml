@@ -1,0 +1,6 @@
+instance-id: ${VM_NAME}-${TIMESTAMP}
+local-hostname: ${VM_HOSTNAME}
+hostname: ${VM_HOSTNAME}
+
+
+

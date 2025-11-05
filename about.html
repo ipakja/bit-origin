@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="de" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Über mich - Stefan Bogdanovic | BIT - Boks IT Support Zürich</title>
+    <meta name="description" content="Stefan Bogdanovic - IT System Engineer mit 12+ Jahren Erfahrung. Von der Rezeption zum IT-Experten. Microsoft 365, Windows Server, Cloud-Migration. Menschliche IT-Lösungen in Zürich.">
+    <meta name="keywords" content="stefan bogdanovic, it system engineer, microsoft 365, windows server, cloud migration, it support zürich, rezeption it, hotel it, bit boks it support">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Über mich - Stefan Bogdanovic | BIT - Boks IT Support Zürich">
+    <meta property="og:description" content="Stefan Bogdanovic - IT System Engineer mit 12+ Jahren Erfahrung. Von der Rezeption zum IT-Experten. Microsoft 365, Windows Server, Cloud-Migration. Menschliche IT-Lösungen in Zürich.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://boksitsupport.ch/about.html">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="favicon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicon.png">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <meta name="theme-color" content="#121110">
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700;900&family=Playfair+Display:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+    <link rel="stylesheet" href="style.css">
+    
+    <style>
+        /* ==================== PROFESSIONAL IT TIMELINE ==================== */
+        .scrollable-timeline {
+            max-height: 600px;
+            overflow-y: auto;
+            padding: 2rem;
+            margin: 0 auto;
+            position: relative;
+            background: var(--background);
+            border: 1px solid rgba(200, 165, 72, 0.2);
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* Professional Scrollbar */
+        .scrollable-timeline::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .scrollable-timeline::-webkit-scrollbar-track {
+            background: rgba(200, 165, 72, 0.1);
+            border-radius: 4px;
+        }
+        
+        .scrollable-timeline::-webkit-scrollbar-thumb {
+            background: var(--gold);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+        
+        .scrollable-timeline::-webkit-scrollbar-thumb:hover {
+            background: var(--gold-hell);
+        }
+        
+        /* Firefox Professional Scrollbar */
+        .scrollable-timeline {
+            scrollbar-width: thin;
+            scrollbar-color: var(--gold) rgba(200, 165, 72, 0.1);
+        }
+        
+        /* Professional Timeline Items */
+        .scrollable-timeline .timeline-item {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: var(--card-bg);
+            border-radius: 8px;
+            border-left: 4px solid var(--gold);
+            position: relative;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .scrollable-timeline .timeline-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 4px 20px rgba(200, 165, 72, 0.2);
+            border-left-color: var(--gold-hell);
+        }
+        
+        /* Professional Timeline Marker */
+        .scrollable-timeline .timeline-marker {
+            position: relative;
+            z-index: 2;
+            width: 50px;
+            height: 50px;
+            background: var(--gold);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(200, 165, 72, 0.3);
+            border: 2px solid var(--background);
+            transition: all 0.3s ease;
+        }
+        
+        .scrollable-timeline .timeline-marker:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(200, 165, 72, 0.4);
+        }
+        
+        .scrollable-timeline .timeline-marker .year {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--anthrazit);
+        }
+        
+        /* Professional Timeline Content */
+        .scrollable-timeline .timeline-content h3 {
+            color: var(--gold);
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        
+        /* Professional Bullet Points */
+        .scrollable-timeline .timeline-bullets li {
+            color: var(--text-hell);
+            font-size: 1rem;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+            padding-left: 1.5rem;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+        
+        .scrollable-timeline .timeline-bullets li:hover {
+            color: var(--gold);
+        }
+        
+        /* Light Mode Timeline Text Colors */
+        [data-theme="light"] .scrollable-timeline .timeline-bullets li {
+            color: var(--anthrazit);
+        }
+        
+        [data-theme="light"] .scrollable-timeline .timeline-bullets li:hover {
+            color: var(--gold);
+        }
+        
+        [data-theme="light"] .scrollable-timeline .timeline-content h3 {
+            color: var(--gold);
+        }
+        
+        .scrollable-timeline .timeline-bullets li:before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0.7em;
+            width: 6px;
+            height: 6px;
+            background: var(--gold);
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .scrollable-timeline .timeline-bullets li:hover:before {
+            transform: scale(1.2);
+            background: var(--gold-hell);
+        }
+        
+        /* Professional Timeline Layout */
+        .scrollable-timeline .timeline-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 1.5rem;
+        }
+        
+        .scrollable-timeline .timeline-marker {
+            flex-shrink: 0;
+            margin-top: 0.5rem;
+        }
+        
+        .scrollable-timeline .timeline-content {
+            flex: 1;
+        }
+        
+        /* Professional Responsive */
+        @media (max-width: 768px) {
+            .scrollable-timeline {
+                max-height: 500px;
+                padding: 1.5rem;
+            }
+            
+            .scrollable-timeline .timeline-item {
+                margin-bottom: 1.5rem;
+                padding: 1.2rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .scrollable-timeline .timeline-marker {
+                width: 40px;
+                height: 40px;
+                align-self: flex-start;
+            }
+            
+            .scrollable-timeline .timeline-content h3 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Dark Mode Toggle -->
+    <div class="dark-mode-toggle" id="darkModeToggle">
+        <i class="fas fa-moon"></i>
+    </div>
+
+
+    <!-- Header -->
+    <header class="header" id="header">
+        <div class="header-content">
+            <div class="logo-section">
+                <a href="index.html" style="text-decoration: none;">
+                    <img src="LOGO_DARK.png" alt="BIT - Boks IT Support" class="logo logo-dark">
+                    <img src="LOGO_LIGHT.png" alt="BIT - Boks IT Support" class="logo logo-light">
+                </a>
+            </div>
+            
+            <div class="language-switch">
+                <a href="about.html" class="lang-link active">DE</a>
+                <a href="about-en.html" class="lang-link">EN</a>
+            </div>
+            
+            <nav class="nav">
+                <ul class="nav-links">
+                    <li><a href="services.html">Services</a></li>
+                    <li><a href="packages.html">BIT Systeme</a></li>
+                    <li><a href="it-matrix.html">IT-Expertise</a></li>
+                    <li><a href="about.html">Über mich und meinen Werdegang</a></li>
+                    <li><a href="#contact">Kontakt</a></li>
+                </ul>
+            </nav>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav" id="mobileNav">
+        <ul class="mobile-nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="services.html">Services</a></li>
+            <li><a href="packages.html">BIT Systeme</a></li>
+            <li><a href="it-matrix.html">IT-Expertise</a></li>
+            <li><a href="about.html">Über mich und meinen Werdegang</a></li>
+            <li><a href="#contact">Kontakt</a></li>
+        </ul>
+    </div>
+    
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-grid">
+                <div class="hero-text animate-slide-in-left">
+                    <h1>Über mich und meinen <span class="highlight">Werdegang</span></h1>
+                    <p class="hero-bio">Von der Rezeption zum IT System Engineer – eine Reise voller Vertrauen, Kompetenz und der Überzeugung, dass Technologie Menschen verbindet</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Text Section -->
+    <section class="about-text-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Es ist Vertrauen in Bewegung</h2>
+                <p>Mein Weg zeigt, dass echte IT-Kompetenz nicht nur aus Zertifikaten entsteht, sondern aus dem Verständnis für Menschen und ihre Bedürfnisse.</p>
+            </div>
+            
+            <div class="about-content">
+                <div class="about-text">
+                    <p>Ich bin Stefan Bogdanovic, IT System Engineer und Gründer von BIT – Boks IT Support. Mein Weg begann nicht in einem Hörsaal, sondern an der Rezeption eines Hotels, wo ich täglich erlebte, wie Technologie Menschen helfen oder behindern kann.</p>
+                    
+                    <p>Diese Erfahrung prägte meine Philosophie: Technologie soll unsichtbar werden, damit Menschen sich auf das Wesentliche konzentrieren können. Ob es um ein instabiles WLAN geht, das Gäste frustriert, oder um ein Kassensystem, das den Arbeitsfluss unterbricht – ich verstehe die Auswirkungen auf den Alltag.</p>
+                    
+                    <p>Meine Expertise in Microsoft 365, Windows Server und Cloud-Migration entwickelte sich durch praktische Erfahrung und kontinuierliches Lernen. Meine aussergewoehnliche Geschwindigkeit am Computer ermöglicht es mir, komplexe Probleme schnell zu analysieren und effiziente Lösungen zu finden.</p>
+                    
+                    <p>Durch die Expertise aus 12 Jahren praktischer IT-Erfahrung kann ich komplexe Systeme verstehen und optimieren. Bei BIT steht nicht die Technologie im Vordergrund, sondern der Mensch. Ich übersetze komplexe IT-Lösungen in verständliche Sprache und sorge dafür, dass Systeme reibungslos funktionieren – damit Sie sich auf Ihre eigentliche Arbeit konzentrieren können.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Timeline Section -->
+    <section class="timeline-section">
+        <div class="container">
+            
+            <div class="vertical-timeline scrollable-timeline">
+                <!-- 2025 -->
+                <div class="timeline-item" data-year="2025">
+                    <div class="timeline-marker active">
+                        <span class="year">2025</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>BIT Gründung & Zukunftsvision</h3>
+                        <p class="timeline-description">ICT Professional SIZ® Zertifizierung erhalten und Gründung von BIT. Vision: Technologie, die Menschen unterstützt und ihnen hilft, ihre Ziele effizienter zu erreichen.</p>
+                    </div>
+                </div>
+
+                <!-- 2024 -->
+                <div class="timeline-item" data-year="2024">
+                    <div class="timeline-marker">
+                        <span class="year">2024</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>SP1 Spezialisierung & Zertifizierung</h3>
+                        <p class="timeline-description">Vertiefung in Automatisierung und KI-Integration für moderne IT-Lösungen. Vorbereitung auf SIZ Zertifizierung und Spezialisierung auf Systeme und Netzwerke.</p>
+                    </div>
+                </div>
+
+                <!-- 2023 -->
+                <div class="timeline-item" data-year="2023">
+                    <div class="timeline-marker">
+                        <span class="year">2023</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>IT System Engineer & Cloud-Experte</h3>
+                        <p class="timeline-description">Windows Server Management und Microsoft 365 Spezialisierung. Cloud-Migration, Automatisierung und KI-Integration für effiziente IT-Infrastrukturen.</p>
+                    </div>
+                </div>
+
+                <!-- 2022 -->
+                <div class="timeline-item" data-year="2022">
+                    <div class="timeline-marker">
+                        <span class="year">2022</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Ticketing-System & IT-Support</h3>
+                        <p class="timeline-description">Spezialisierung auf Ticketing-Systeme und IT-Support für Kunden und Kollegen. Systemanalyse, Problemlösung und erste Automatisierungsansätze für effizientere Abläufe.</p>
+                    </div>
+                </div>
+
+                <!-- 2021 -->
+                <div class="timeline-item" data-year="2021">
+                    <div class="timeline-marker">
+                        <span class="year">2021</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Rezeption & Buchhaltung</h3>
+                        <p class="timeline-description">Rezeptionsarbeit im Hotel mit Buchhaltungsaufgaben und Debitorenverwaltung. Microsoft 365 und Windows-Systeme, administrative Tätigkeiten und Kundenbetreuung.</p>
+                    </div>
+                </div>
+
+                <!-- 2020 -->
+                <div class="timeline-item" data-year="2020">
+                    <div class="timeline-marker">
+                        <span class="year">2020</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Digitalisierung & Remote-Work</h3>
+                        <p class="timeline-description">Remote-Work Setup und Support für Umstellung auf Homeoffice. VPN und Sicherheitslösungen, Mobile Device Management und Cloud-Integration für Collaboration.</p>
+                    </div>
+                </div>
+
+                <!-- 2019 -->
+                <div class="timeline-item" data-year="2019">
+                    <div class="timeline-marker">
+                        <span class="year">2019</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Prozess-Optimierung & Analytics</h3>
+                        <p class="timeline-description">Workflow-Analyse und -Optimierung für bessere Performance. Automatisierung einfacher Tasks, Standardisierung von Prozessen und Effizienz-Messungen mit KPIs.</p>
+                    </div>
+                </div>
+
+                <!-- 2018 -->
+                <div class="timeline-item" data-year="2018">
+                    <div class="timeline-marker">
+                        <span class="year">2018</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>CEO & Administrator</h3>
+                        <p class="timeline-description">Erste CEO-Erfahrung im Hotel als Administrator für alle Systeme. Google-Schnittstellen und APIs, Systemverwaltung und Optimierung, Team-Leadership und Koordination.</p>
+                    </div>
+                </div>
+
+                <!-- 2017 -->
+                <div class="timeline-item" data-year="2017">
+                    <div class="timeline-marker">
+                        <span class="year">2017</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Rezeption & Buchhaltung</h3>
+                        <p class="timeline-description">Rezeptionsarbeit im Hotel mit Buchhaltungsaufgaben und Debitorenverwaltung. Microsoft 365 und Windows-Systeme, administrative Tätigkeiten und Kundenbetreuung.</p>
+                    </div>
+                </div>
+
+                <!-- 2016 -->
+                <div class="timeline-item" data-year="2016">
+                    <div class="timeline-marker">
+                        <span class="year">2016</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Mobile & Cloud-Integration</h3>
+                        <p class="timeline-description">Mobile Geräte-Integration und Cloud-Services entdecken. Synchronisation zwischen Geräten, Reporting und Analytics, Kunden-Support verbessern für bessere Effizienz.</p>
+                    </div>
+                </div>
+
+                <!-- 2015 -->
+                <div class="timeline-item" data-year="2015">
+                    <div class="timeline-marker">
+                        <span class="year">2015</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Schnelligkeit & Effizienz</h3>
+                        <p class="timeline-description">Aussergewoehnliche PC-Geschwindigkeit und Optimierung von Arbeitsabläufen. Erste IT-Problembehebungen, Effizienzsteigerung durch Technologie und kreative Lösungsansätze.</p>
+                    </div>
+                </div>
+
+                <!-- 2014 -->
+                <div class="timeline-item" data-year="2014">
+                    <div class="timeline-marker">
+                        <span class="year">2014</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>System-Vertiefung & Windows 8</h3>
+                        <p class="timeline-description">Windows 8 und 8.1 Migration mit Microsoft Outlook und Exchange. Erweiterte Datei-Management, System-Updates und Wartung, Benutzer-Schulungen und Support.</p>
+                    </div>
+                </div>
+
+                <!-- 2013 -->
+                <div class="timeline-item" data-year="2013">
+                    <div class="timeline-marker">
+                        <span class="year">2013</span>
+                    </div>
+                    <div class="timeline-content">
+                        <h3>Rezeption & Erste IT-Erfahrungen</h3>
+                        <p class="timeline-description">Rezeptionsarbeit im Hotel mit Microsoft 365 und Windows 7-10. ASSD Opera und Infor Systeme, schnelle Auffassungsgabe und Lernbereitschaft, Kundenkontakt und Service-Optimierung.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Spacer for better visual separation -->
+    <div style="height: 4rem;"></div>
+
+    <!-- Mission Section -->
+    <section class="mission-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Meine Mission</h2>
+                <p>Technologie soll Menschen verbinden, nicht trennen</p>
+            </div>
+            
+            <div class="mission-content">
+                <div class="mission-text">
+                    <p>Mein Weg in die IT war kein geradliniger, sondern ein natürlicher Fortschritt.</p>
+                    
+                    <p>Aus der täglichen Arbeit mit Menschen wuchs die Verantwortung für Systeme, die zuverlässig funktionieren müssen.</p>
+                    
+                    <p>Ich habe gelernt, dass Technologie nur dann echten Wert hat, sofern sie den Menschen stärkt – nicht überfordert.</p>
+                    
+                    <p>Echte Kompetenz entsteht für mich aus Neugier, Disziplin und dem Willen, jedes Detail zu verstehen.</p>
+                    
+                    <p>Ich verbinde technisches Denken mit menschlichem Verständnis und entwickle Lösungen, die klar, effizient und vertrauenswürdig sind.</p>
+                    
+                    <p>Ob bei Netzwerken, Automatisierung oder Microsoft 365 – mein Ziel bleibt immer dasselbe:</p>
+                    
+                    <p>Technologie soll Menschen freisetzen, nicht bremsen.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-bottom">
+            <p>&copy; 2025 BIT - Boks IT Support – Zürich | <a href="legal.html" style="color: var(--primary);">Impressum</a></p>
+        </div>
+    </footer>
+    
+    <script>
+        // Header scroll effect
+        window.addEventListener('scroll', function() {
+            const header = document.getElementById('header');
+            if (window.scrollY > 100) {
+                header.classList.add('scrolled');
+            } else {
+                header.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for navigation links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Dark Mode Toggle
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        body.setAttribute('data-theme', currentTheme);
+        updateDarkModeIcon(currentTheme);
+
+        darkModeToggle.addEventListener('click', function() {
+            const currentTheme = body.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            body.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            updateDarkModeIcon(newTheme);
+        });
+
+        function updateDarkModeIcon(theme) {
+            const icon = darkModeToggle.querySelector('i');
+            if (theme === 'dark') {
+                icon.className = 'fas fa-sun';
+            } else {
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+        
+        // Timeline Animation
+        function animateTimeline() {
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            const timelineObserver = new IntersectionObserver((entries) => {
+                entries.forEach((entry, index) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('animate');
+                        }, index * 200);
+                    }
+                });
+            }, { threshold: 0.3 });
+            
+            timelineItems.forEach(item => {
+                timelineObserver.observe(item);
+            });
+        }
+        
+        // Initialize timeline animation
+        animateTimeline();
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-fade-in-up');
+                }
+            });
+        }, observerOptions);
+        
+        // Observe all service cards and package cards
+        document.querySelectorAll('.service-card, .package-card').forEach(card => {
+            observer.observe(card);
+        });
+
+        // Mobile Menu Toggle
+        const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+        const mobileNav = document.getElementById('mobileNav');
+
+        mobileMenuToggle.addEventListener('click', function() {
+            mobileMenuToggle.classList.toggle('active');
+            mobileNav.classList.toggle('active');
+        });
+
+        // Close mobile menu when clicking on a link
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', function() {
+                mobileMenuToggle.classList.remove('active');
+                mobileNav.classList.remove('active');
+            });
+        });
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            if (!mobileMenuToggle.contains(event.target) && !mobileNav.contains(event.target)) {
+                mobileMenuToggle.classList.remove('active');
+                mobileNav.classList.remove('active');
+            }
+        });
+
+        console.log('🚀 BIT - Boks IT Support website loaded successfully!');
+        console.log('📧 Contact: info@boksitsupport.ch');
+        console.log('📞 Phone: +41 76 531 21 56');
+    </script>
+</body>
+</html>

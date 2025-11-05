@@ -1,0 +1,44 @@
+name: Security Scan
+
+on:
+  schedule:
+    - cron: '0 2 * * *'  # Täglich um 2 Uhr
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  security:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Run Trivy vulnerability scanner
+      uses: aquasecurity/trivy-action@master
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+    
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      with:
+        sarif_file: 'trivy-results.sarif'
+    
+    - name: Run CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        languages: bash, python, yaml
+    
+    - name: Security Report
+      run: |
+        echo "🔒 Security Scan abgeschlossen"
+        echo "📊 Vulnerabilities: $(cat trivy-results.sarif | jq '.runs[0].results | length')"
+        echo "✅ CodeQL Analysis: Erfolgreich"
+
+
+
+

@@ -1,0 +1,41 @@
+<!--
+BIT-Lab Libvirt Netzwerk-Konfiguration
+Isoliertes Netzwerk 192.168.50.0/24 ohne DHCP (statische Leases via bit-core)
+-->
+<network>
+  <name>bitlab</name>
+  <uuid>a1b2c3d4-e5f6-7890-abcd-ef1234567890</uuid>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <mac address='52:54:00:12:34:56'/>
+  <domain name='bitlab.local'/>
+  <dns>
+    <host ip='192.168.50.10'>
+      <hostname>bit-core</hostname>
+      <hostname>bit-core.bitlab.local</hostname>
+    </host>
+    <host ip='192.168.50.20'>
+      <hostname>bit-flow</hostname>
+      <hostname>bit-flow.bitlab.local</hostname>
+    </host>
+    <host ip='192.168.50.30'>
+      <hostname>bit-vault</hostname>
+      <hostname>bit-vault.bitlab.local</hostname>
+    </host>
+    <host ip='192.168.50.1'>
+      <hostname>bit-gateway</hostname>
+      <hostname>bit-gateway.bitlab.local</hostname>
+    </host>
+  </dns>
+  <ip address='192.168.50.254' netmask='255.255.255.0'>
+    <!-- Gateway und DNS werden via bit-core und bit-gateway bereitgestellt -->
+    <!-- DHCP ist deaktiviert, alle IPs sind statisch -->
+  </ip>
+</network>
+
+
+

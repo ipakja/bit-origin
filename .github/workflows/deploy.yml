@@ -1,0 +1,52 @@
+name: BIT Origin Deployment
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    
+    - name: Deploy to BIT Origin Server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} '
+          cd /opt/bit-origin &&
+          git pull origin main &&
+          sudo ./scripts/bit-origin-complete-implementation.sh
+        '
+    
+    - name: Health Check
+      run: |
+        curl -f https://boksitsupport.ch || exit 1
+        curl -f https://api.boksitsupport.ch/status || exit 1
+        curl -f https://monitoring.boksitsupport.ch || exit 1
+    
+    - name: Notify on Success
+      if: success()
+      run: |
+        echo "✅ BIT Origin Deployment erfolgreich!"
+        echo "🌐 Website: https://boksitsupport.ch"
+        echo "📊 Monitoring: https://monitoring.boksitsupport.ch"
+    
+    - name: Notify on Failure
+      if: failure()
+      run: |
+        echo "❌ BIT Origin Deployment fehlgeschlagen!"
+        echo "🔍 Bitte GitHub Actions Logs prüfen"
+
+
+
+

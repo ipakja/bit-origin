@@ -1,0 +1,170 @@
+#cloud-config
+# BIT-Lab Cloud-Init User-Data Template
+# Automatisch generiert von deploy.sh
+
+users:
+  - name: ${CLOUD_INIT_USER}
+    groups: sudo, adm, systemd-journal
+    lock_passwd: false
+    shell: /bin/bash
+    sudo: ALL=(ALL) NOPASSWD:ALL
+    ssh_authorized_keys:
+      - ${SSH_PUBLIC_KEY}
+
+# Hostname setzen
+hostname: ${VM_HOSTNAME}
+fqdn: ${VM_HOSTNAME}.${NETWORK_DOMAIN}
+manage_etc_hosts: true
+
+# Timezone
+timezone: ${CLOUD_INIT_TIMEZONE}
+
+# Locale
+locale: ${CLOUD_INIT_LOCALE}
+
+# Disable password-based SSH login (Security)
+ssh_pwauth: false
+ssh_deletekeys: false
+ssh_genkeytypes: ['rsa', 'ecdsa', 'ed25519']
+
+# Paket-Updates
+package_update: true
+package_upgrade: ${AUTO_UPDATES}
+packages:
+  - curl
+  - wget
+  - git
+  - vim
+  - htop
+  - net-tools
+  - iputils-ping
+  - dnsutils
+  - openssh-server
+  - ca-certificates
+  - apt-transport-https
+  - gnupg
+  - lsb-release
+  - unattended-upgrades
+  - ufw
+
+# SSH-Härtung
+ssh_svcname: ssh
+ssh_server:
+  password_authentication: false
+  permit_root_login: false
+  pubkey_authentication: true
+  client_alive_interval: 300
+  client_alive_count_max: 2
+
+# Unattended-Upgrades konfigurieren
+unattended_upgrades:
+  package_blacklist: []
+  auto_fix_interrupted_dpkg: true
+  minimal_steps: true
+  on_ac_power: true
+  on_battery: false
+  update_package_lists: true
+  upgrade_packages: ${AUTO_UPDATES}
+  autoclean_interval: 7
+
+# Write Files für Konfiguration
+write_files:
+  # Hosts-Datei für lokale Resolution
+  - path: /etc/hosts
+    owner: root:root
+    permissions: '0644'
+    content: |
+      127.0.0.1 localhost
+      127.0.1.1 ${VM_HOSTNAME} ${VM_HOSTNAME}.${NETWORK_DOMAIN}
+      ${BIT_CORE_IP} bit-core bit-core.${NETWORK_DOMAIN}
+      ${BIT_FLOW_IP} bit-flow bit-flow.${NETWORK_DOMAIN}
+      ${BIT_VAULT_IP} bit-vault bit-vault.${NETWORK_DOMAIN}
+      ${BIT_GATEWAY_IP} bit-gateway bit-gateway.${NETWORK_DOMAIN}
+
+  # UFW Firewall-Konfiguration
+  - path: /etc/ufw/ufw.conf
+    owner: root:root
+    permissions: '0644'
+    content: |
+      ENABLED=yes
+      DEFAULT_INPUT_POLICY=DROP
+      DEFAULT_FORWARD_POLICY=DROP
+      DEFAULT_OUTPUT_POLICY=ACCEPT
+
+# Runcmd für Post-Installation
+runcmd:
+  # System-Update
+  - apt-get update
+  - apt-get upgrade -y || true
+
+  # UFW Firewall aktivieren
+  - ufw --force enable
+  - ufw default deny incoming
+  - ufw default allow outgoing
+  - ufw allow 22/tcp comment 'SSH'
+  - ufw allow 53/tcp comment 'DNS' || true
+  - ufw allow 53/udp comment 'DNS' || true
+
+  # Fail2ban installieren (wenn aktiviert)
+  - |
+    if [ "${ENABLE_FAIL2BAN}" = "true" ]; then
+      apt-get install -y fail2ban
+      systemctl enable fail2ban
+      systemctl start fail2ban
+    fi
+
+  # Netdata installieren (wenn aktiviert)
+  - |
+    if [ "${ENABLE_NETDATA}" = "true" ]; then
+      bash <(curl -Ss https://my-netdata.io/kickstart.sh) --non-interactive --stable-channel
+      systemctl enable netdata
+      systemctl start netdata
+      ufw allow 19999/tcp comment 'Netdata' || true
+    fi
+
+  # Spezifische Konfiguration je nach VM-Rolle
+  - |
+    case "${VM_NAME}" in
+      bit-core)
+        # DNS/DHCP/Syslog Installation
+        apt-get install -y bind9 bind9utils bind9-doc isc-dhcp-server rsyslog
+        systemctl enable bind9
+        systemctl enable isc-dhcp-server
+        systemctl enable rsyslog
+        ufw allow 67/udp comment 'DHCP' || true
+        ;;
+      bit-flow)
+        # PowerShell Core und Python-Tools
+        apt-get install -y python3 python3-pip python3-venv
+        pip3 install --upgrade pip requests pyyaml
+        # PowerShell Core (Install-Script)
+        curl -L https://aka.ms/Install-PowerShell.sh | bash || true
+        ;;
+      bit-vault)
+        # Storage und Backup-Tools
+        apt-get install -y nfs-kernel-server samba borgbackup rsync cryptsetup
+        ufw allow 2049/tcp comment 'NFS' || true
+        ufw allow 445/tcp comment 'Samba' || true
+        ;;
+      bit-gateway)
+        # NAT und Firewall
+        sysctl -w net.ipv4.ip_forward=1
+        echo 'net.ipv4.ip_forward=1' >> /etc/sysctl.conf
+        ufw allow 80/tcp comment 'HTTP' || true
+        ufw allow 443/tcp comment 'HTTPS' || true
+        ;;
+    esac
+
+  # System-Neustart für Kernel-Updates (optional, kann entfernt werden)
+  # - reboot || true
+
+# Final Message
+final_message: |
+  BIT-Lab VM ${VM_HOSTNAME} ist bereit!
+  IP: ${VM_IP}
+  Hostname: ${VM_HOSTNAME}.${NETWORK_DOMAIN}
+  User: ${CLOUD_INIT_USER}
+  SSH: ssh ${CLOUD_INIT_USER}@${VM_IP}
+
+
+

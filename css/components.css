@@ -1,0 +1,266 @@
+/* ==================== COMPONENT LIBRARY ==================== */
+/* SOLID Principles Applied: Single Responsibility, Open/Closed, Liskov Substitution, Interface Segregation, Dependency Inversion */
+
+/* ==================== BUTTON COMPONENTS ==================== */
+/* Single Responsibility: Each button class has one specific purpose */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: var(--transition);
+    border: none;
+    cursor: pointer;
+    font-size: 0.875rem;
+    position: relative;
+    overflow: hidden;
+    will-change: transform, box-shadow;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hell) 100%);
+    color: var(--anthrazit);
+    border: none;
+    font-weight: 700;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 6px 20px rgba(200,165,72,0.4);
+    animation: slideInLeft 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.2s both;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+    left: 100%;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, var(--gold-hell) 0%, var(--gold) 100%);
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 12px 35px rgba(200,165,72,0.6);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--gold);
+    color: var(--gold);
+    font-weight: 600;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    animation: slideInRight 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 1.4s both;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    will-change: transform, background-color;
+}
+
+.btn-outline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 100%;
+    background: var(--gold);
+    transition: width 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    z-index: -1;
+}
+
+.btn-outline:hover::before {
+    width: 100%;
+}
+
+.btn-outline:hover {
+    color: var(--anthrazit);
+    transform: translate3d(0, -4px, 0);
+    box-shadow: 0 12px 35px rgba(200,165,72,0.4);
+}
+
+/* ==================== CARD COMPONENTS ==================== */
+/* Open/Closed Principle: Cards are open for extension but closed for modification */
+.service-card {
+    background: linear-gradient(135deg, #202020 0%, #1a1a1a 100%);
+    border: 1px solid rgba(200, 165, 72, 0.3);
+    border-radius: 16px;
+    padding: 2rem;
+    transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    will-change: transform, box-shadow, border-color;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--gold), var(--gold-hell));
+    transform: scaleX(0);
+    transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    transform-origin: left;
+}
+
+.service-card::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(200, 165, 72, 0.05) 0%, transparent 50%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.service-card:hover {
+    transform: translate3d(0, -8px, 0);
+    box-shadow: 0 20px 60px rgba(200, 165, 72, 0.3);
+    border-color: var(--gold);
+}
+
+.service-card:hover::before {
+    transform: scaleX(1);
+}
+
+.service-card:hover::after {
+    opacity: 1;
+}
+
+/* ==================== ICON COMPONENTS ==================== */
+/* Interface Segregation: Icons have a single, well-defined interface */
+.service-icon {
+    width: 70px;
+    height: 70px;
+    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-hell) 100%);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+    position: relative;
+    overflow: hidden;
+    will-change: transform;
+}
+
+.service-icon::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.2) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+}
+
+.service-card:hover .service-icon::before {
+    transform: translateX(100%);
+}
+
+.service-card:hover .service-icon {
+    transform: scale3d(1.1, 1.1, 1) rotate(5deg);
+}
+
+.service-icon i {
+    font-size: 1.8rem;
+    color: var(--anthrazit);
+    z-index: 1;
+    position: relative;
+}
+
+/* ==================== SECTION COMPONENTS ==================== */
+/* Liskov Substitution: All sections can be substituted without breaking functionality */
+.section-header {
+    text-align: center;
+    margin-bottom: var(--space-16);
+}
+
+.section-header h2 {
+    font-family: var(--font-display);
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: var(--space-4);
+}
+
+.section-header p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* ==================== ANIMATION COMPONENTS ==================== */
+/* Dependency Inversion: Animations depend on abstractions, not concrete implementations */
+.animate-scale-in {
+    animation: scaleIn 0.6s ease-out;
+}
+
+.animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out;
+}
+
+.animate-slide-in-left {
+    animation: slideInLeft 0.8s ease-out;
+}
+
+.animate-slide-in-right {
+    animation: slideInRight 0.8s ease-out;
+}
+
+.animate-pulse {
+    animation: pulse 2s infinite;
+}
+
+/* ==================== RESPONSIVE COMPONENTS ==================== */
+/* Single Responsibility: Each responsive rule has one specific purpose */
+@media (max-width: 768px) {
+    .btn {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .service-card {
+        margin-bottom: var(--space-4);
+    }
+    
+    .section-header h2 {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .btn {
+        padding: var(--space-4) var(--space-5);
+        font-size: 0.9rem;
+    }
+    
+    .service-card {
+        padding: var(--space-6);
+    }
+    
+    .section-header h2 {
+        font-size: 1.8rem;
+    }
+}
+
