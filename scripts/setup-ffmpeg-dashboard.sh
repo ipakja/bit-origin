@@ -33,23 +33,23 @@ fi
 DASHBOARD_DIR="${BASE}/docker/ffmpeg-dashboard"
 mkdir -p "${DASHBOARD_DIR}"
 
-# 4. Docker Compose für FFmpeg Dashboard (Nginx)
-cat > "${DASHBOARD_DIR}/docker-compose.yml" <<'EOF'
-version: "3.9"
-services:
-  ffmpeg-dashboard:
-    image: nginx:alpine
-    container_name: ffmpeg-dashboard
-    restart: unless-stopped
-    ports:
-      - "8189:80"
-    volumes:
-      - ./dashboard:/usr/share/nginx/html:ro
-volumes:
-EOF
+# 4. Docker Compose für FFmpeg Dashboard (Backend + Frontend)
+# Docker Compose wird aus dem Repository verwendet
+# Falls nicht vorhanden, wird es von GitHub geholt
 
-# 5. Einfaches Web-Dashboard erstellen
+# 5. Dashboard und Backend werden aus dem Repository kopiert
+# Falls nicht vorhanden, wird es von GitHub geholt
 mkdir -p "${DASHBOARD_DIR}/dashboard"
+mkdir -p "${DASHBOARD_DIR}/backend"
+
+# Falls die Dateien noch nicht existieren, erstelle sie manuell
+# (Normalerweise werden sie von git pull geholt)
+if [ ! -f "${DASHBOARD_DIR}/dashboard/index.html" ]; then
+    echo "Hinweis: Dashboard-Dateien werden von GitHub geholt"
+    echo "Bitte 'git pull' ausführen, um die neuesten Dateien zu erhalten"
+fi
+
+# Temporäres altes HTML (wird durch git pull überschrieben)
 cat > "${DASHBOARD_DIR}/dashboard/index.html" <<'HTML'
 <!DOCTYPE html>
 <html lang="de">
@@ -294,10 +294,17 @@ docker compose up -d
 echo ""
 echo "=== FFMPEG DASHBOARD READY ==="
 echo ""
-echo "Dashboard: http://192.168.42.133:${PORT}"
+echo "Dashboard: http://192.168.42.133:8189"
+echo "API Backend: http://192.168.42.133:8000"
 echo ""
-echo "Hinweis:"
-echo "- Upload-Funktion wird später implementiert"
-echo "- FFmpeg-Commands werden angezeigt"
-echo "- Für jetzt: Commands manuell ausführen"
+echo "Features:"
+echo "- Video erstellen mit Musik-Timeline (Sekunden-basiert)"
+echo "- Lautstärke anpassen"
+echo "- Fotos schneiden"
+echo "- Video komprimieren, schneiden, konvertieren"
+echo ""
+echo "WICHTIG: Docker Compose neu starten nach git pull:"
+echo "  cd ${DASHBOARD_DIR}"
+echo "  docker compose down"
+echo "  docker compose up -d --build"
 

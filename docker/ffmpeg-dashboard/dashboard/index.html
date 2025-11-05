@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FFmpeg Dashboard - BIT Origin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 10px; }
+        .subtitle { opacity: 0.9; }
+        .content { padding: 40px; }
+        .section {
+            margin-bottom: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .section h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 600;
+        }
+        input[type="text"], input[type="file"], input[type="number"], select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        .btn:active { transform: translateY(0); }
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 15px;
+            background: #1e1e1e;
+            color: #00ff00;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            max-height: 300px;
+            overflow-y: auto;
+            display: none;
+        }
+        .output.error {
+            color: #ff4444;
+        }
+        .output.success {
+            color: #44ff44;
+        }
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+        }
+        .code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .audio-track {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+            border: 1px solid #ddd;
+        }
+        .audio-track-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .btn-small {
+            padding: 8px 16px;
+            font-size: 14px;
+            background: #dc3545;
+            border: none;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .btn-small:hover {
+            background: #c82333;
+        }
+        .progress {
+            width: 100%;
+            height: 20px;
+            background: #ddd;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+            display: none;
+        }
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            width: 0%;
+            transition: width 0.3s;
+        }
+        .download-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+        }
+        .download-link:hover {
+            background: #218838;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎬 FFmpeg Dashboard</h1>
+            <p class="subtitle">Video & Audio Processing - BIT Origin</p>
+        </header>
+        <div class="content">
+            <!-- Video erstellen mit Musik -->
+            <div class="section">
+                <h2>Video erstellen mit Musik (Timeline)</h2>
+                <form id="createVideoForm">
+                    <div class="form-group">
+                        <label>Video-Dauer (Sekunden):</label>
+                        <input type="number" id="videoDuration" value="60" min="1" step="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Auflösung:</label>
+                        <select id="videoResolution">
+                            <option value="1920:1080">1920x1080 (Full HD)</option>
+                            <option value="1280:720">1280x720 (HD)</option>
+                            <option value="854:480">854x480 (SD)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Hintergrundfarbe:</label>
+                        <input type="text" id="bgColor" value="black" placeholder="black, white, #FF0000">
+                    </div>
+                    <div class="form-group">
+                        <label>Musik-Tracks (Zeit-basiert):</label>
+                        <div id="audioTracks"></div>
+                        <button type="button" class="btn" onclick="addAudioTrack()">+ Musik-Track hinzufügen</button>
+                    </div>
+                    <button type="submit" class="btn">Video erstellen</button>
+                </form>
+                <div id="createVideoOutput" class="output"></div>
+            </div>
+
+            <!-- Video Processing -->
+            <div class="section">
+                <h2>Video Processing</h2>
+                <form id="videoForm">
+                    <div class="form-group">
+                        <label>Operation:</label>
+                        <select id="operation" required>
+                            <option value="compress">Komprimieren</option>
+                            <option value="resize">Größe ändern</option>
+                            <option value="cut">Schneiden</option>
+                            <option value="convert">Format konvertieren</option>
+                            <option value="extract_audio">Audio extrahieren</option>
+                            <option value="adjust_volume">Lautstärke anpassen</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Input-Datei:</label>
+                        <input type="file" id="inputFile" accept="video/*,audio/*" required>
+                    </div>
+                    <div class="form-group" id="paramsGroup"></div>
+                    <button type="submit" class="btn">Process Video</button>
+                </form>
+                <div class="progress" id="progress">
+                    <div class="progress-bar" id="progressBar"></div>
+                </div>
+                <div id="output" class="output"></div>
+            </div>
+
+            <!-- Foto schneiden -->
+            <div class="section">
+                <h2>Foto/Bild schneiden</h2>
+                <form id="cropForm">
+                    <div class="form-group">
+                        <label>Bild-Datei:</label>
+                        <input type="file" id="cropInputFile" accept="image/*" required>
+                    </div>
+                    <div class="form-group">
+                        <label>X-Position (Start):</label>
+                        <input type="number" id="cropX" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Y-Position (Start):</label>
+                        <input type="number" id="cropY" value="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Breite:</label>
+                        <input type="number" id="cropWidth" value="1920" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label>Höhe:</label>
+                        <input type="number" id="cropHeight" value="1080" min="1">
+                    </div>
+                    <button type="submit" class="btn">Bild schneiden</button>
+                </form>
+                <div id="cropOutput" class="output"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'http://192.168.42.133:8000';
+        let uploadedFiles = {};
+        let audioTrackCount = 0;
+
+        // Video erstellen mit Musik
+        document.getElementById('createVideoForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const output = document.getElementById('createVideoOutput');
+            output.style.display = 'block';
+            output.className = 'output';
+            output.textContent = 'Video wird erstellt... Bitte warten...';
+
+            const duration = parseFloat(document.getElementById('videoDuration').value);
+            const resolution = document.getElementById('videoResolution').value.split(':');
+            const bgColor = document.getElementById('bgColor').value;
+            const tracks = Array.from(document.querySelectorAll('.audio-track')).map(track => {
+                const fileInput = track.querySelector('input[type="file"]');
+                const startTime = parseFloat(track.querySelector('input[placeholder="Start (Sekunden)"]').value);
+                const duration = track.querySelector('input[placeholder="Dauer (Sekunden, leer = bis Ende)"]').value;
+                const volume = parseFloat(track.querySelector('input[placeholder="Lautstärke (1.0 = 100%)"]').value);
+
+                return {
+                    file: fileInput.dataset.filename,
+                    start_time: startTime,
+                    duration: duration ? parseFloat(duration) : null,
+                    volume: volume
+                };
+            }).filter(t => t.file);
+
+            if (tracks.length === 0) {
+                output.className = 'output error';
+                output.textContent = 'Fehler: Mindestens 1 Musik-Track erforderlich';
+                return;
+            }
+
+            // Zuerst alle Audio-Dateien hochladen
+            const trackInputs = Array.from(document.querySelectorAll('.audio-track input[type="file"]'));
+            for (let i = 0; i < trackInputs.length; i++) {
+                const input = trackInputs[i];
+                if (input.files[0]) {
+                    const formData = new FormData();
+                    formData.append('file', input.files[0]);
+                    const uploadRes = await fetch(`${API_BASE}/upload`, {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const uploadData = await uploadRes.json();
+                    tracks[i].file = uploadData.filename;
+                }
+            }
+
+            const requestData = {
+                duration: duration,
+                width: parseInt(resolution[0]),
+                height: parseInt(resolution[1]),
+                fps: 30,
+                background_color: bgColor,
+                audio_tracks: tracks
+            };
+
+            try {
+                const response = await fetch(`${API_BASE}/process/create-video`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    output.className = 'output success';
+                    output.innerHTML = `✅ Video erfolgreich erstellt!<br><a href="${API_BASE}${data.download_url}" class="download-link" download>Download Video</a>`;
+                } else {
+                    output.className = 'output error';
+                    output.textContent = `Fehler: ${data.detail || 'Unknown error'}`;
+                }
+            } catch (error) {
+                output.className = 'output error';
+                output.textContent = `Fehler: ${error.message}`;
+            }
+        });
+
+        function addAudioTrack() {
+            const container = document.getElementById('audioTracks');
+            const trackId = audioTrackCount++;
+            const trackDiv = document.createElement('div');
+            trackDiv.className = 'audio-track';
+            trackDiv.id = `track-${trackId}`;
+            trackDiv.innerHTML = `
+                <div class="audio-track-header">
+                    <strong>Musik-Track ${trackId + 1}</strong>
+                    <button type="button" class="btn-small" onclick="removeAudioTrack(${trackId})">Entfernen</button>
+                </div>
+                <div class="form-group">
+                    <label>Audio-Datei:</label>
+                    <input type="file" accept="audio/*" required>
+                </div>
+                <div class="form-group">
+                    <label>Start-Zeit (Sekunden):</label>
+                    <input type="number" placeholder="Start (Sekunden)" value="0" min="0" step="0.1" required>
+                </div>
+                <div class="form-group">
+                    <label>Dauer (Sekunden, leer = bis Ende):</label>
+                    <input type="number" placeholder="Dauer (Sekunden, leer = bis Ende)" min="0" step="0.1">
+                </div>
+                <div class="form-group">
+                    <label>Lautstärke (1.0 = 100%, 0.5 = 50%, 2.0 = 200%):</label>
+                    <input type="number" placeholder="Lautstärke (1.0 = 100%)" value="1.0" min="0" max="10" step="0.1" required>
+                </div>
+            `;
+            container.appendChild(trackDiv);
+        }
+
+        function removeAudioTrack(id) {
+            document.getElementById(`track-${id}`).remove();
+        }
+
+        // Video Processing
+        const form = document.getElementById('videoForm');
+        const operation = document.getElementById('operation');
+        const paramsGroup = document.getElementById('paramsGroup');
+        const output = document.getElementById('output');
+
+        operation.addEventListener('change', updateParams);
+        updateParams();
+
+        function updateParams() {
+            const op = operation.value;
+            let html = '';
+            
+            if (op === 'resize') {
+                html = `
+                    <label>Größe:</label>
+                    <select id="size">
+                        <option value="1920:1080">1920x1080 (Full HD)</option>
+                        <option value="1280:720">1280x720 (HD)</option>
+                        <option value="854:480">854x480 (SD)</option>
+                        <option value="640:360">640x360 (niedrig)</option>
+                    </select>
+                `;
+            } else if (op === 'cut') {
+                html = `
+                    <label>Start-Zeit (HH:MM:SS oder Sekunden):</label>
+                    <input type="text" id="startTime" placeholder="00:01:00 oder 60">
+                    <label style="margin-top:10px;">Dauer (HH:MM:SS oder Sekunden):</label>
+                    <input type="text" id="duration" placeholder="00:02:00 oder 120">
+                `;
+            } else if (op === 'compress') {
+                html = `
+                    <label>Qualität (0-51, niedriger = besser):</label>
+                    <input type="number" id="quality" value="23" min="0" max="51">
+                `;
+            } else if (op === 'convert') {
+                html = `
+                    <label>Ziel-Format:</label>
+                    <select id="format">
+                        <option value="mp4">MP4</option>
+                        <option value="avi">AVI</option>
+                        <option value="mov">MOV</option>
+                        <option value="mkv">MKV</option>
+                        <option value="webm">WebM</option>
+                    </select>
+                `;
+            } else if (op === 'adjust_volume') {
+                html = `
+                    <label>Lautstärke (1.0 = 100%, 0.5 = 50%, 2.0 = 200%):</label>
+                    <input type="number" id="volume" value="1.0" min="0" max="10" step="0.1">
+                `;
+            }
+            
+            paramsGroup.innerHTML = html;
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            output.style.display = 'block';
+            output.className = 'output';
+            output.textContent = 'Datei wird hochgeladen...';
+            
+            const file = document.getElementById('inputFile').files[0];
+            if (!file) {
+                output.className = 'output error';
+                output.textContent = 'Bitte Datei auswählen';
+                return;
+            }
+
+            // Upload
+            const formData = new FormData();
+            formData.append('file', file);
+            
+            try {
+                const uploadRes = await fetch(`${API_BASE}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+                
+                if (!uploadRes.ok) {
+                    throw new Error(uploadData.detail || 'Upload failed');
+                }
+
+                output.textContent = 'Verarbeitung läuft...';
+                const fileId = uploadData.file_id;
+                const op = operation.value;
+
+                let processUrl = '';
+                let processFormData = new FormData();
+                processFormData.append('file_id', fileId);
+
+                if (op === 'compress') {
+                    processUrl = `${API_BASE}/process/compress`;
+                    processFormData.append('quality', document.getElementById('quality').value);
+                } else if (op === 'resize') {
+                    processUrl = `${API_BASE}/process/resize`;
+                    const size = document.getElementById('size').value.split(':');
+                    processFormData.append('width', size[0]);
+                    processFormData.append('height', size[1]);
+                } else if (op === 'cut') {
+                    processUrl = `${API_BASE}/process/cut`;
+                    processFormData.append('start_time', document.getElementById('startTime').value);
+                    processFormData.append('duration', document.getElementById('duration').value);
+                } else if (op === 'adjust_volume') {
+                    processUrl = `${API_BASE}/process/audio-volume`;
+                    processFormData.append('volume', document.getElementById('volume').value);
+                }
+
+                const processRes = await fetch(processUrl, {
+                    method: 'POST',
+                    body: processFormData
+                });
+
+                const processData = await processRes.json();
+                if (processRes.ok) {
+                    output.className = 'output success';
+                    output.innerHTML = `✅ Verarbeitung erfolgreich!<br><a href="${API_BASE}${processData.download_url}" class="download-link" download>Download Ergebnis</a>`;
+                } else {
+                    output.className = 'output error';
+                    output.textContent = `Fehler: ${processData.detail || 'Unknown error'}`;
+                }
+            } catch (error) {
+                output.className = 'output error';
+                output.textContent = `Fehler: ${error.message}`;
+            }
+        });
+
+        // Foto schneiden
+        document.getElementById('cropForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const output = document.getElementById('cropOutput');
+            output.style.display = 'block';
+            output.className = 'output';
+            output.textContent = 'Bild wird hochgeladen...';
+
+            const file = document.getElementById('cropInputFile').files[0];
+            if (!file) {
+                output.className = 'output error';
+                output.textContent = 'Bitte Bild auswählen';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                const uploadRes = await fetch(`${API_BASE}/upload`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const uploadData = await uploadRes.json();
+
+                if (!uploadRes.ok) {
+                    throw new Error(uploadData.detail || 'Upload failed');
+                }
+
+                output.textContent = 'Bild wird geschnitten...';
+
+                const processFormData = new FormData();
+                processFormData.append('file_id', uploadData.file_id);
+                processFormData.append('x', document.getElementById('cropX').value);
+                processFormData.append('y', document.getElementById('cropY').value);
+                processFormData.append('width', document.getElementById('cropWidth').value);
+                processFormData.append('height', document.getElementById('cropHeight').value);
+
+                const processRes = await fetch(`${API_BASE}/process/crop-image`, {
+                    method: 'POST',
+                    body: processFormData
+                });
+
+                const processData = await processRes.json();
+                if (processRes.ok) {
+                    output.className = 'output success';
+                    output.innerHTML = `✅ Bild erfolgreich geschnitten!<br><a href="${API_BASE}${processData.download_url}" class="download-link" download>Download Bild</a>`;
+                } else {
+                    output.className = 'output error';
+                    output.textContent = `Fehler: ${processData.detail || 'Unknown error'}`;
+                }
+            } catch (error) {
+                output.className = 'output error';
+                output.textContent = `Fehler: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>

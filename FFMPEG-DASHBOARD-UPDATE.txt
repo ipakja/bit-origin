@@ -1,0 +1,79 @@
+================================================================================
+FFMPEG DASHBOARD UPDATE - NEUE FEATURES
+================================================================================
+
+Das Dashboard wurde erweitert mit:
+1. Video erstellen mit Musik-Timeline (Sekunden-basiert)
+2. Lautstärke anpassen (beliebig)
+3. Fotos schneiden mit FFmpeg
+
+================================================================================
+SCHRITT 1: Auf Server wechseln
+================================================================================
+
+cd /opt/bit-origin
+git pull
+
+================================================================================
+SCHRITT 2: Docker Compose neu starten
+================================================================================
+
+cd /opt/bit-origin/docker/ffmpeg-dashboard
+
+# Alte Container stoppen
+docker compose down
+
+# Backend neu bauen (falls Änderungen)
+docker compose build
+
+# Neu starten
+docker compose up -d
+
+================================================================================
+SCHRITT 3: Prüfen
+================================================================================
+
+# Backend prüfen
+curl http://192.168.42.133:8000/health
+
+# Dashboard öffnen
+http://192.168.42.133:8189
+
+================================================================================
+NEUE FEATURES
+================================================================================
+
+1. VIDEO ERSTELLEN MIT MUSIK
+   - Video-Dauer festlegen (Sekunden)
+   - Auflösung wählen
+   - Hintergrundfarbe
+   - Mehrere Musik-Tracks mit Timeline:
+     * Start-Zeit (Sekunden)
+     * Dauer (optional, leer = bis Ende)
+     * Lautstärke (1.0 = 100%, 0.5 = 50%, 2.0 = 200%)
+
+2. LAUTSTÄRKE ANPASSEN
+   - Video oder Audio hochladen
+   - Lautstärke-Wert eingeben (0.0 - 10.0)
+   - Verarbeitung starten
+
+3. FOTO SCHNEIDEN
+   - Bild hochladen
+   - X/Y-Position (Start)
+   - Breite/Höhe
+   - Schneiden
+
+================================================================================
+API ENDPUNKTE
+================================================================================
+
+POST /upload                    - Datei hochladen
+POST /process/compress          - Video komprimieren
+POST /process/resize            - Video-Größe ändern
+POST /process/cut               - Video schneiden
+POST /process/audio-volume      - Lautstärke anpassen
+POST /process/crop-image        - Bild schneiden
+POST /process/create-video      - Video mit Musik erstellen
+GET  /download/{filename}      - Ergebnis herunterladen
+
+================================================================================
