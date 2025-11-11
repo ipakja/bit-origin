@@ -8,8 +8,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  security:
+  trivy-scan:
+    name: Trivy Vulnerability Scanner
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
     
     steps:
     - name: Checkout code
@@ -24,34 +28,57 @@ jobs:
         output: 'trivy-results.sarif'
       continue-on-error: true
     
-    - name: Upload Trivy scan results
+    - name: Upload Trivy results to GitHub Security
       uses: github/codeql-action/upload-sarif@v2
+      if: always()
       with:
         sarif_file: 'trivy-results.sarif'
       continue-on-error: true
     
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v2
-      with:
-        languages: bash, python, yaml
-    
-    - name: Run CodeQL Analysis
-      uses: github/codeql-action/analyze@v2
-      continue-on-error: true
-    
     - name: Install jq
+      if: always()
       run: sudo apt-get update && sudo apt-get install -y jq
     
     - name: Security Report
+      if: always()
       run: |
-        echo "🔒 Security Scan abgeschlossen"
+        echo "🔒 Trivy Security Scan abgeschlossen"
         if [ -f trivy-results.sarif ]; then
           VULN_COUNT=$(cat trivy-results.sarif | jq -r '.runs[0].results | length // 0' 2>/dev/null || echo "0")
           echo "📊 Vulnerabilities gefunden: $VULN_COUNT"
         else
           echo "⚠️  Trivy SARIF-Datei nicht gefunden"
         fi
-        echo "✅ Security Scan abgeschlossen"
+        echo "✅ Trivy Scan abgeschlossen"
+
+  codeql-analysis:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+    permissions:
+      actions: read
+      contents: read
+      security-events: write
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        language: ['python']
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+    
+    - name: Autobuild CodeQL
+      uses: github/codeql-action/autobuild@v2
+    
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      continue-on-error: true
 
 
 
