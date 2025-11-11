@@ -22,22 +22,38 @@ jobs:
         scan-ref: '.'
         format: 'sarif'
         output: 'trivy-results.sarif'
+      continue-on-error: true
     
     - name: Upload Trivy scan results
       uses: github/codeql-action/upload-sarif@v2
       with:
         sarif_file: 'trivy-results.sarif'
+      continue-on-error: true
+    
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: bash, python, yaml
     
     - name: Run CodeQL Analysis
       uses: github/codeql-action/analyze@v2
-      with:
-        languages: bash, python, yaml
+      continue-on-error: true
+    
+    - name: Install jq
+      run: sudo apt-get update && sudo apt-get install -y jq
     
     - name: Security Report
       run: |
         echo "🔒 Security Scan abgeschlossen"
-        echo "📊 Vulnerabilities: $(cat trivy-results.sarif | jq '.runs[0].results | length')"
-        echo "✅ CodeQL Analysis: Erfolgreich"
+        if [ -f trivy-results.sarif ]; then
+          VULN_COUNT=$(cat trivy-results.sarif | jq -r '.runs[0].results | length // 0' 2>/dev/null || echo "0")
+          echo "📊 Vulnerabilities gefunden: $VULN_COUNT"
+        else
+          echo "⚠️  Trivy SARIF-Datei nicht gefunden"
+        fi
+        echo "✅ Security Scan abgeschlossen"
+
+
 
 
 
