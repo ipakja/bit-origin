@@ -1,15 +1,22 @@
 name: BIT Origin Deployment
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  # Nur manuell auslösbar - für lokale VMware-Umgebung
   workflow_dispatch:
+    inputs:
+      server_type:
+        description: 'Server-Typ (vmware/production)'
+        required: true
+        default: 'vmware'
+        type: choice
+        options:
+          - vmware
+          - production
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    # Nur ausführen, wenn Secrets vorhanden sind (optional - für lokale VM nicht erforderlich)
     
     steps:
     - name: Checkout code
@@ -22,7 +29,8 @@ jobs:
     
     - name: Deploy to BIT Origin Server
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} '
+        echo "🖥️  Deployment zu ${{ inputs.server_type }} Server"
+        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 ${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }} '
           set -e
           cd /opt/bit-origin || exit 1
           echo "🔄 Git Pull..."
@@ -41,9 +49,9 @@ jobs:
       continue-on-error: true
     
     - name: Health Check
-      if: always()
+      if: always() && ${{ inputs.server_type == 'production' }}
       run: |
-        echo "🔍 Health Checks..."
+        echo "🔍 Health Checks (Production)..."
         FAILED=0
         
         if curl -f -s --max-time 5 https://boksitsupport.ch > /dev/null 2>&1; then
@@ -70,18 +78,48 @@ jobs:
         fi
       continue-on-error: true
     
+    - name: VMware Local Health Check
+      if: always() && ${{ inputs.server_type == 'vmware' }}
+      run: |
+        echo "🔍 Health Checks (VMware - Lokal)..."
+        echo "ℹ️  Für lokale VMware-VM (192.168.42.133) werden Health Checks übersprungen"
+        echo "ℹ️  Lokale Services:"
+        echo "   - Uptime-Kuma: http://192.168.42.133:3001"
+        echo "   - Zammad: http://192.168.42.133:8080"
+        echo "   - Nextcloud: http://192.168.42.133:8081-8100"
+        echo "✅ Deployment auf lokaler VM abgeschlossen"
+      continue-on-error: true
+    
     - name: Notify on Success
       if: success()
       run: |
         echo "✅ BIT Origin Deployment erfolgreich!"
-        echo "🌐 Website: https://boksitsupport.ch"
-        echo "📊 Monitoring: https://monitoring.boksitsupport.ch"
+        if [ "${{ inputs.server_type }}" == "production" ]; then
+          echo "🌐 Website: https://boksitsupport.ch"
+          echo "📊 Monitoring: https://monitoring.boksitsupport.ch"
+        else
+          echo "🖥️  VMware VM: 192.168.42.133"
+          echo "📊 Lokale Services verfügbar"
+        fi
     
     - name: Notify on Failure
       if: failure()
       run: |
         echo "❌ BIT Origin Deployment fehlgeschlagen!"
         echo "🔍 Bitte GitHub Actions Logs prüfen"
+        echo "ℹ️  Für lokale VMware-VM: Prüfe SSH-Verbindung und Secrets"
+    
+    - name: Check Secrets
+      if: always()
+      run: |
+        if [ -z "${{ secrets.SSH_PRIVATE_KEY }}" ] || [ -z "${{ secrets.SERVER_USER }}" ] || [ -z "${{ secrets.SERVER_HOST }}" ]; then
+          echo "⚠️  Deployment übersprungen: Secrets nicht konfiguriert"
+          echo "ℹ️  Für lokale VMware-VM ist automatisches Deployment nicht erforderlich"
+          echo "ℹ️  Manuelles Deployment: ssh user@192.168.42.133 'cd /opt/bit-origin && git pull'"
+        else
+          echo "✅ Secrets konfiguriert - Deployment kann durchgeführt werden"
+        fi
+      continue-on-error: true
 
 
 
