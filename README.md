@@ -2,6 +2,8 @@
 
 **Produktionsreifer Server für bis zu 20 Benutzer**
 
+> Test – automatischer Pull vom Server
+
 [![Production Ready](https://img.shields.io/badge/Status-Production%20Ready-green)]()
 [![Docker](https://img.shields.io/badge/Docker-Ready-blue)]()
 [![Security](https://img.shields.io/badge/Security-Hardened-red)]()
