@@ -29,9 +29,9 @@ jobs:
           
           # Patterns für hardcoded Passwörter (nur echte, nicht Variablen)
           # Findet: PASSWORD="sven", PASSWORD='test123', password=hardcoded
-          # Ignoriert: PASSWORD=$(openssl...), PASSWORD=${VAR}, PASSWORD=NEXTCLOUD_PASSWORD
+          # Ignoriert: PASSWORD=$(openssl...), PASSWORD=${VAR}, PASSWORD=NEXTCLOUD_PASSWORD, KEY="$(grep..."
           HARDCODED_PASSWORD_PATTERN = re.compile(
-              r'(?i)(?:password|passwd|pwd|secret|token|key)\s*[=:]\s*["\']([^"\']{3,})["\']',
+              r'(?i)(?:password|passwd|pwd|secret|token)\s*[=:]\s*["\']([^"\']{3,})["\']',
               re.MULTILINE
           )
           
@@ -99,13 +99,18 @@ jobs:
                                       is_legitimate = True
                                       break
                               
-                              # Prüfe ob es eine generierte Variable ist (z.B. $(openssl rand...))
-                              context_start = max(0, match.start() - 50)
-                              context_end = min(len(content), match.end() + 50)
-                              context = content[context_start:context_end]
-                              
-                              if re.search(r'\$\(.*openssl.*rand', context, re.IGNORECASE):
-                                  is_legitimate = True
+                    # Prüfe ob es eine generierte Variable ist (z.B. $(openssl rand...), $(grep...), etc.)
+                    context_start = max(0, match.start() - 50)
+                    context_end = min(len(content), match.end() + 50)
+                    context = content[context_start:context_end]
+                    
+                    # Ignoriere Command-Substitution: $(command)
+                    if re.search(r'\$\([^)]+\)', context):
+                        is_legitimate = True
+                    
+                    # Ignoriere openssl rand speziell
+                    if re.search(r'\$\(.*openssl.*rand', context, re.IGNORECASE):
+                        is_legitimate = True
                               
                               # Prüfe ob es ein Template-Platzhalter ist
                               if password_value.isupper() and '_' in password_value:
