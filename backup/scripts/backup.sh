@@ -31,3 +31,5 @@ echo "Backup abgeschlossen: $(date)" >> /var/log/backup.log
 
 
 
+
+

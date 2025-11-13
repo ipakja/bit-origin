@@ -172,3 +172,5 @@ curl -I "$URL"
 **Nächster Schritt:** Tool-Auswahl und Integration planen
 
 
+
+

@@ -325,3 +325,5 @@ virsh console bit-core              # Konsole öffnen
 
 
 
+
+
