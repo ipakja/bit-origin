@@ -84,3 +84,5 @@ echo "Zugang:"
 echo "  ssh ${USERNAME}@$(hostname -I | awk '{print $1}')"
 echo "  Password: ${PASSWORD}"
 
+
+

@@ -76,3 +76,5 @@ echo ""
 echo "=== KUNDE ${NAME} GELÖSCHT ==="
 echo ""
 
+
+

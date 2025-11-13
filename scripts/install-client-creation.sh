@@ -212,3 +212,5 @@ echo "  bit-create-client hotel01 hotel stefan@example.com"
 echo "  bit-create-client kosmetik01 kosmetik info@example.com"
 echo ""
 
+
+

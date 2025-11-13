@@ -150,3 +150,5 @@ echo "Support-System verfügbar unter:"
 echo "  http://${DOMAIN}/support/"
 echo ""
 
+
+

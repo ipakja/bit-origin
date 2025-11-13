@@ -104,3 +104,5 @@ echo "- Erster Start kann 5-10 Minuten dauern (Modelle werden heruntergeladen)"
 echo "- CPU-Version ist langsamer als GPU-Version"
 echo "- Logs: docker logs comfyui"
 
+
+

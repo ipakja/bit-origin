@@ -238,3 +238,5 @@ Den Server auf GitHub zu schalten bedeutet, dass der komplette Server-Setup als 
 
 **Status:** Idee dokumentiert  
 **Nächster Schritt:** Server mit GitHub synchronisieren
+
+

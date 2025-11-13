@@ -170,3 +170,5 @@ curl -I "$URL"
 
 **Status:** Konzept erstellt  
 **Nächster Schritt:** Tool-Auswahl und Integration planen
+
+

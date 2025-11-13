@@ -100,3 +100,5 @@ echo "2. KI-Video: cd ${COMFYUI_DIR} && docker compose -f docker-compose-cpu.yml
 echo ""
 echo "KI-Dashboard: http://192.168.42.133:8188"
 
+
+

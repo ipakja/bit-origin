@@ -29,3 +29,5 @@ borg prune --keep-daily=7 --keep-weekly=4 --keep-monthly=6 "$REPO" 2>/dev/null |
 
 echo "Backup abgeschlossen: $(date)" >> /var/log/backup.log
 
+
+

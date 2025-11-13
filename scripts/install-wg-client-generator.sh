@@ -112,3 +112,5 @@ echo "  wg-add-client CLIENT_NAME"
 echo "  wg-add-client hotel01"
 echo ""
 
+
+

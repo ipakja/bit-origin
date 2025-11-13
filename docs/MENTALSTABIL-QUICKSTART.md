@@ -103,3 +103,5 @@ Bei Fragen oder Problemen:
 - FFmpeg: `ffmpeg -version`
 - Status: `docker ps | grep comfyui`
 
+
+

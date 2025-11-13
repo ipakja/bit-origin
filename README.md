@@ -22,6 +22,8 @@ BIT Origin ist ein vollständig automatisierter Server-Setup für IT-Support-Die
 - **Self-Healing** - Automatische Service-Wiederherstellung (alle 15 Min)
 - **Monitoring** - System- und Service-Überwachung
 - **Backup-System** - Automatische verschlüsselte Backups
+- **CI/CD Pipeline** - Self-hosted Gitea + Drone für vollständige Kontrolle
+- **RAG Indexer** - Automatische Code-Indexierung für AI-Assistenten
 
 ## Schnellstart
 
@@ -88,6 +90,8 @@ bit-origin/
 - **SERVER-INSTALLATION-KOMPLETT.txt** - Komplette Installationsanleitung
 - **docs/QUICKSTART-PRODUCTION.md** - Production Quickstart
 - **docs/SETUP-COMPLETE-SYSTEM.md** - Detailliertes Setup
+- **docs/GITEA-DRONE-SETUP.md** - Self-hosted CI/CD Pipeline Setup
+- **SECURITY_POLICY.md** - Security Policy & Best Practices
 - **docs/** - Weitere Betriebsdokumentation
 
 ## Lizenz

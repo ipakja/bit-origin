@@ -124,3 +124,5 @@ echo "Servicekatalog verfügbar unter:"
 echo "  http://${DOMAIN}/servicekatalog.html"
 echo ""
 
+
+

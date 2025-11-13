@@ -281,3 +281,5 @@ docker/lighthouse/
 
 **Status:** Open Source Lösungen gefunden  
 **Nächster Schritt:** SEO Panel installieren?
+
+
