@@ -99,18 +99,18 @@ jobs:
                                       is_legitimate = True
                                       break
                               
-                    # Prüfe ob es eine generierte Variable ist (z.B. $(openssl rand...), $(grep...), etc.)
-                    context_start = max(0, match.start() - 50)
-                    context_end = min(len(content), match.end() + 50)
-                    context = content[context_start:context_end]
-                    
-                    # Ignoriere Command-Substitution: $(command)
-                    if re.search(r'\$\([^)]+\)', context):
-                        is_legitimate = True
-                    
-                    # Ignoriere openssl rand speziell
-                    if re.search(r'\$\(.*openssl.*rand', context, re.IGNORECASE):
-                        is_legitimate = True
+                              # Prüfe ob es eine generierte Variable ist (z.B. $(openssl rand...), $(grep...), etc.)
+                              context_start = max(0, match.start() - 50)
+                              context_end = min(len(content), match.end() + 50)
+                              context = content[context_start:context_end]
+                              
+                              # Ignoriere Command-Substitution: $(command)
+                              if re.search(r'\$\([^)]+\)', context):
+                                  is_legitimate = True
+                              
+                              # Ignoriere openssl rand speziell
+                              if re.search(r'\$\(.*openssl.*rand', context, re.IGNORECASE):
+                                  is_legitimate = True
                               
                               # Prüfe ob es ein Template-Platzhalter ist
                               if password_value.isupper() and '_' in password_value:
