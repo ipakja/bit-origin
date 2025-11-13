@@ -22,7 +22,8 @@ log_success() {
 
 # Variablen
 USERNAME="sven"
-PASSWORD="sven"
+# Generiere sicheres Passwort zur Laufzeit
+PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
 WIREGUARD_DIR="/etc/wireguard"
 WG_INTERFACE="wg0"
 

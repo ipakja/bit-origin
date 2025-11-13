@@ -33,7 +33,8 @@ log_error() {
 # ---------- VARIABLES ----------
 SERVER_NAME="green"
 USERNAME="sven"
-USER_PASSWORD="sven"
+# Generiere sicheres Passwort zur Laufzeit
+USER_PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
 BASE_DIR="/opt/bit-origin"
 WIREGUARD_DIR="/etc/wireguard"
 WG_INTERFACE="wg0"

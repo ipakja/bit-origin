@@ -8,7 +8,8 @@ EMAIL_USER="info"
 EMAIL_DOMAIN="mentalstabil.com"
 EMAIL_FULL="${EMAIL_USER}@${EMAIL_DOMAIN}"
 SYS_USER="mentalstabil"
-PASSWORD="mentalstabil888"
+# Generiere sicheres Passwort zur Laufzeit
+PASSWORD=$(openssl rand -base64 16 | tr -d "=+/" | cut -c1-16)
 
 echo "=== MENTALSTABIL SETUP ==="
 echo "Systemuser: ${SYS_USER}"
