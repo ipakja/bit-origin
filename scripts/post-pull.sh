@@ -5,8 +5,18 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+# BIT Origin Base-Verzeichnis automatisch erkennen
+if [ -d "/opt/bit-origin" ]; then
+    BASE_DIR="/opt/bit-origin"
+elif [ -d "/srv/bit-origin" ]; then
+    BASE_DIR="/srv/bit-origin"
+else
+    # Fallback: Script-Verzeichnis verwenden
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    BASE_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
+fi
+
+SCRIPT_DIR="$BASE_DIR/scripts"
 
 log_info() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] [INFO] $1"

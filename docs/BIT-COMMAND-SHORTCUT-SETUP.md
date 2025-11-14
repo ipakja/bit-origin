@@ -11,12 +11,20 @@ Dieses Dokument beschreibt, wie der Desktop-Shortcut für BIT Command erstellt u
 ### Auf bit-admin ausführen:
 
 ```bash
-# 1. Script ausführbar machen
+# Das Script erkennt automatisch, ob /opt/bit-origin oder /srv/bit-origin verwendet wird
+
+# 1. Script ausführbar machen (Pfad wird automatisch erkannt)
+sudo chmod +x /opt/bit-origin/scripts/create-bit-command-shortcut.sh
+# ODER falls /srv/bit-origin:
 sudo chmod +x /srv/bit-origin/scripts/create-bit-command-shortcut.sh
 
 # 2. Shortcut erstellen
+sudo /opt/bit-origin/scripts/create-bit-command-shortcut.sh
+# ODER:
 sudo /srv/bit-origin/scripts/create-bit-command-shortcut.sh
 ```
+
+**Hinweis:** Das Script erkennt automatisch, welcher Pfad verwendet wird (`/opt/bit-origin` oder `/srv/bit-origin`).
 
 **Ergebnis:** Ein Desktop-Icon "BIT Command" erscheint auf dem Desktop.
 
@@ -34,6 +42,9 @@ Bearbeite deinen systemd-Service (z.B. `/etc/systemd/system/git-auto-pull-origin
 
 ```ini
 [Service]
+# Automatische Pfad-Erkennung (Script erkennt /opt/bit-origin oder /srv/bit-origin)
+ExecStart=/bin/bash -c 'cd /opt/bit-origin && git pull origin main && /opt/bit-origin/scripts/post-pull.sh'
+# ODER falls /srv/bit-origin:
 ExecStart=/bin/bash -c 'cd /srv/bit-origin && git pull origin main && /srv/bit-origin/scripts/post-pull.sh'
 ```
 
@@ -44,12 +55,21 @@ ExecStart=/bin/bash -c 'cd /srv/bit-origin && git pull origin main && /srv/bit-o
 crontab -e
 
 # Einfügen (z.B. alle 15 Minuten):
+# Für /opt/bit-origin:
+*/15 * * * * cd /opt/bit-origin && git pull origin main && /opt/bit-origin/scripts/post-pull.sh >> /var/log/git-pull.log 2>&1
+# ODER für /srv/bit-origin:
 */15 * * * * cd /srv/bit-origin && git pull origin main && /srv/bit-origin/scripts/post-pull.sh >> /var/log/git-pull.log 2>&1
 ```
 
 #### Option 3: Manuell nach jedem Pull
 
 ```bash
+# Für /opt/bit-origin:
+cd /opt/bit-origin
+git pull origin main
+/opt/bit-origin/scripts/post-pull.sh
+
+# ODER für /srv/bit-origin:
 cd /srv/bit-origin
 git pull origin main
 /srv/bit-origin/scripts/post-pull.sh

@@ -5,6 +5,15 @@
 
 set -euo pipefail
 
+# BIT Origin Base-Verzeichnis automatisch erkennen
+if [ -d "/opt/bit-origin" ]; then
+    BIT_ORIGIN_BASE="/opt/bit-origin"
+elif [ -d "/srv/bit-origin" ]; then
+    BIT_ORIGIN_BASE="/srv/bit-origin"
+else
+    BIT_ORIGIN_BASE="/opt/bit-origin"  # Default
+fi
+
 # Farben für Output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -79,6 +88,7 @@ SHORTCUT="$DESKTOP_DIR/BIT-Command.desktop"
 # Logo-Pfad (verschiedene mögliche Pfade)
 LOGO_PATHS=(
     "/mnt/data/LOGO_MEDIA.png"
+    "$BIT_ORIGIN_BASE/public/bit-logo.png"
     "/opt/bit-origin/public/bit-logo.png"
     "/srv/bit-origin/public/bit-logo.png"
     "/home/$CURRENT_USER/bit-logo.png"
