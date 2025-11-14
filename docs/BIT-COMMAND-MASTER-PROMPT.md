@@ -29,6 +29,26 @@ Falls diese Datei nicht direkt zugänglich ist:
 **Typografie:** `Inter` (Google Fonts)  
 **Stil:** Minimalistisch, professionell, modern
 
+### UX-Design-Prinzipien (Apple-ähnlich)
+
+**KRITISCH:** BIT Command muss sich für Nutzer so einfach und intuitiv anfühlen wie Apple-Software:
+
+- **Klares, ruhiges UI** mit sehr wenig Optionen pro Bildschirm
+- **Große klickbare Flächen** (min. 44x44px Touch-Targets)
+- **Selbsterklärende Texte** statt Fachjargon
+- **Sinnvolle Standardwerte** überall
+- **Deutliche Bestätigungsdialoge** vor kritischen Aktionen
+- **Konsistente Navigation** (linke Seitenleiste, klare Überschriften)
+- **Visuelles Feedback** nach jeder Aktion (z.B. "Erfolgreich gespeichert")
+- **"Happy Path"** - ein normaler Nutzer ohne technische Vorkenntnisse kann die wichtigsten Aufgaben mit **maximal 3 Klicks** erledigen
+
+**UI-Regeln:**
+- Maximal 5-7 Hauptoptionen pro Seite
+- Jede Aktion hat sofortiges visuelles Feedback
+- Fehler-Messages sind konstruktiv und zeigen Lösungsweg
+- Loading-States sind immer sichtbar
+- Formulare haben intelligente Validierung (inline, nicht erst beim Submit)
+
 ### Branding-Datei erstellen
 
 Erstelle `frontend/src/styles/branding.css`:
@@ -881,32 +901,39 @@ docker-compose -f /srv/bit-command/docker/docker-compose.prod.yml logs -f
 ### Phase 3: Frontend (Next.js)
 1. **Layout:**
    - Navbar mit Logo
-   - Sidebar (Admin/Customer)
+   - Sidebar (Admin/Customer) - konsistent, klar strukturiert
    - Footer
+   - **UX:** Maximal 5-7 Hauptmenüpunkte, große klickbare Bereiche
 2. **Auth:**
-   - Login-Page
+   - Login-Page - selbsterklärend, keine technischen Begriffe
    - Auth Context/Hook
    - Protected Routes
+   - **UX:** Klare Fehlermeldungen, visuelles Feedback
 3. **Admin-Bereich:**
-   - Dashboard
-   - Tenants-Verwaltung
-   - Users-Verwaltung
-   - Settings
+   - Dashboard - Übersicht, nicht überladen
+   - Tenants-Verwaltung - "Happy Path" in 3 Klicks
+   - Users-Verwaltung - große Buttons, klare Aktionen
+   - Settings - sinnvolle Defaults, selbsterklärend
+   - **UX:** Jede Aktion hat Bestätigung, visuelles Feedback
 4. **Customer-Bereich:**
-   - Dashboard
-   - Devices-Übersicht
-   - Tickets
-   - Monitoring
+   - Dashboard - fokussiert, nicht überladen
+   - Devices-Übersicht - klare Status-Anzeigen
+   - Tickets - einfaches Erstellen in 3 Klicks
+   - Monitoring - visuelle Darstellung, keine rohen Daten
+   - **UX:** Kein Fachjargon, selbsterklärende Labels
 5. **Components:**
-   - Reusable UI (Buttons, Cards, Tables)
+   - Reusable UI (Buttons min. 44x44px, Cards, Tables)
    - Feature-Flag-basierte Rendering
+   - **UX:** Konsistente Größen, klare Hierarchie, sofortiges Feedback
 
 ### Phase 4: Integration & Testing
 1. API-Client im Frontend
-2. Form-Validierung
-3. Error-Handling
-4. Loading States
-5. Responsive Design
+2. Form-Validierung - **inline, nicht erst beim Submit**
+3. Error-Handling - **konstruktiv, zeigt Lösungsweg**
+4. Loading States - **immer sichtbar, nie unsichtbar**
+5. Responsive Design - **mobile-first, große Touch-Targets**
+6. **UX-Testing:** Jede Hauptfunktion in max. 3 Klicks erreichbar
+7. **Feedback:** Jede Aktion zeigt sofortiges visuelles Feedback
 
 ### Phase 5: Docker & Deployment
 1. Dockerfiles (Dev + Prod)
